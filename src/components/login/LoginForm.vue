@@ -51,8 +51,28 @@
         },
         login(){
           this.butonLoading=true
+          const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
           api.login(this.code,this.user).then(res=>{
             console.log(res.data);
+            if(res.data.code==1){
+              this.$router.push({
+                path: "/chat"
+              })
+              this.$message.success('欢迎'+res.data.data.userName+"!");
+            }
+            else{
+              this.$message.error(res.data.message)
+            }
+            
+          }).catch(err=>{
+            this.$message.error(err.message)
+          }).finally(()=>{
+            loading.close()
           })
           this.butonLoading=false
           

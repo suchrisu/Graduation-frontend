@@ -33,35 +33,69 @@
             userId: '',
             userPassword: '',
             rolePowerId: '2',
+            userName:""
           },
           code:"",
           userCheckPassword: "",
           buttonDisabled: false,
           interval: null,
           time: "",
-          sendCodeText: "发送注册码"
+          sendCodeText: "发送注册码",
         }
       },
       methods: {
         sendRegisterCode(){
-            api.sendRegisterCode(this.userId).then(
+            const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+            api.sendRegisterCode(this.user.userId).then(
                 res=>{
-                    this.time=60 
+                    if(res.data.code==1){
+                        this.time=60 
                     this.interval=setInterval(()=>{
                         this.sendCodeText = "发送注册码"+"("+this.time+"s)"
                         this.time=this.time-1
 
             },1000)
                     console.log(res.data);
+                    this.$message.success("发送成功!")
+                    }
+                    else{
+                        this.$message.error(res.data.message)
+                    }
                 }
-            )
+            ).catch(err=>{
+                this.$message.error(err.message)
+            }).finally(()=>{
+                loading.close()
+            })
         },
         register(){
+            const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+            this.user.userName = this.user.userId
             api.register(this.code,this.user).then(
                 res=>{
-                    console.log(res.data)
+                    this.$router.go(0)
+                    if(res.data.code==1){
+                        this.$message.success("注册成功!")
+                    }
+                    else{
+                        this.$message.error(res.data.message)
+                    }
                 }
-            )
+            ).catch(err=>{
+                this.$message.error(error.message)
+            }).finally(()=>{
+                loading.close()
+            })
         }
       },
       watch:{
@@ -70,7 +104,7 @@
                 this.buttonDisabled=true
                
             }
-            if(oldValue==0){
+            if(newValue==-1){
                 clearInterval(this.interval)
                 this.buttonDisabled = false
                 this.sendCodeText = "发送注册码"
