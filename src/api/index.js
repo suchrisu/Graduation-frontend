@@ -1,6 +1,6 @@
-import axios from "../utils/requests";
-import {path} from "./path"
-export const api = {
+import axios from "../util/requests";
+import path from "./path"
+export default {
     getBaseUrl(){
         return axios.get(path.baseUrl)
     },

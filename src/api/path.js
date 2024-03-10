@@ -1,4 +1,4 @@
-export const path={
+export default{
     baseUrl: "http://localhost",
     login:"/user/login",
     loginCode:"/user/loginCode",
