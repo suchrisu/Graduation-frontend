@@ -2,20 +2,23 @@
   <div class="chatHome">
     <div class="chatLeft">
       <div class="title">
-        <h1>大猫聊天室</h1>
+        <h1>智慧政务交互系统</h1>
       </div>
       <div class="online-person">
-        <span class="onlin-text">聊天列表</span>
+        <span class="onlin-text">会话列表</span>
+        <span class="addSession">
+          <el-button icon="el-icon-plus" @click="addSession">新建会话</el-button>
+        </span>
         <div class="person-cards-wrapper">
           <div
             class="personList"
-            v-for="personInfo in personList"
-            :key="personInfo.id"
-            @click="clickPerson(personInfo)"
+            v-for="session in sessionList"
+            :key="session.sessionId"
+            @click="clickSession(session)"
           >
             <PersonCard
-              :personInfo="personInfo"
-              :pcCurrent="pcCurrent"
+              :session="session"
+              :sessionCurrent="sessionCurrent"
             ></PersonCard>
           </div>
         </div>
@@ -25,8 +28,8 @@
       <!-- <router-view></router-view> -->
       <div v-if="showChatWindow">
         <ChatWindow
-          :frinedInfo="chatWindowInfo"
-          @personCardSort="personCardSort"
+          :sessionInfo="chatWindowInfo"
+          @sessionCardSort="sessionCardSort"
         ></ChatWindow>
       </div>
       <div class="showIcon" v-else>
@@ -41,8 +44,9 @@
 <script>
 import PersonCard from "@/components/PersonCard.vue";
 import ChatWindow from "./chatwindow.vue";
-
+import axios from "@/util/requests"
 import { getFriend } from "@/api/getData";
+import {mapState,mapMutations} from 'vuex'
 export default {
   name: "App",
   components: {
@@ -51,37 +55,44 @@ export default {
   },
   data() {
     return {
-      pcCurrent: "",
-      personList: [],
+      sessionCurrent: "",
       showChatWindow: false,
       chatWindowInfo: {},
     };
   },
   mounted() {
-    getFriend().then((res) => {
-      console.log(res);
-      this.personList = res;
-    });
+    axios.get("/session/getSession").then(res=>{
+      this.setSessionList(res.data)
+    })
+  },
+
+  computed:{
+    ...mapState(["sessionList"])
   },
   methods: {
-    clickPerson(info) {
-      this.showChatWindow = true;
-      this.chatWindowInfo = info;
-      this.personInfo = info;
-      this.pcCurrent = info.id;
+    ...mapMutations(["setSessionList"]),
+    addSession(){
+
     },
-    personCardSort(id) {
-      if (id !== this.personList[0].id) {
+    clickSession(session) {
+      this.showChatWindow = true;
+      this.chatWindowInfo = session;
+      this.sessionCurrent = session.sessionId;
+    },
+    sessionCardSort(id) {
+      let sessionListTemp = this.sessionList;
+      if (id !== sessionListTemp[0].sessionId) {
         console.log(id);
-        let nowPersonInfo;
-        for (let i = 0; i < this.personList.length; i++) {
-          if (this.personList[i].id == id) {
-            nowPersonInfo = this.personList[i];
-            this.personList.splice(i, 1);
+        let nowSessionInfo;
+        for (let i = 0; i < sessionListTemp.length; i++) {
+          if (sessionListTemp[i].sessionId == id) {
+            nowSessionInfo = sessionListTemp[i];
+            sessionListTemp.splice(i, 1);
             break;
           }
         }
-        this.personList.unshift(nowPersonInfo);
+        sessionListTemp.unshift(nowSessionInfo);
+        this.setSessionList(sessionListTemp)
       }
     },
   },
@@ -99,14 +110,14 @@ export default {
       padding-left: 10px;
     }
     .online-person {
-      margin-top: 100px;
+      margin-top: 60px;
       .onlin-text {
         padding-left: 10px;
         color: rgb(176, 178, 189);
       }
       .person-cards-wrapper {
         padding-left: 10px;
-        height: 65vh;
+        height: 68vh;
         margin-top: 20px;
         overflow: hidden;
         overflow-y: scroll;
@@ -134,6 +145,25 @@ export default {
         // color: rgb(28, 30, 44);
       }
     }
+  }
+}
+
+.addSession{
+  margin-left: 65px;
+}
+
+.el-button{
+  font-size: 15px;
+  border-radius: 10px;
+  background-color: rgb(50, 54, 68);
+  cursor: pointer;
+  color: white;
+  border-color: rgb(50, 54, 68);
+  &:hover {
+    background-color: #1d90f5;
+    transition: 0.3s;
+    box-shadow: 0px 0px 10px 0px rgba(0, 136, 255);
+    
   }
 }
 </style>

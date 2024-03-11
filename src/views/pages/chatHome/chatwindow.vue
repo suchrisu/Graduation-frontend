@@ -2,11 +2,11 @@
   <div class="chat-window">
     <div class="top">
       <div class="head-pic">
-        <HeadPortrait :imgUrl="frinedInfo.headImg"></HeadPortrait>
+        <HeadPortrait :imgUrl="sessionInfo.headImg"></HeadPortrait>
       </div>
       <div class="info-detail">
-        <div class="name">{{ frinedInfo.name }}</div>
-        <div class="detail">{{ frinedInfo.detail }}</div>
+        <div class="name">{{ sessionInfo.sessionName }}</div>
+        <div class="detail">{{ sessionInfo.sessionDetail }}</div>
       </div>
       <div class="other-fun">
         <span class="iconfont icon-shipin" @click="video"> </span>
@@ -36,8 +36,12 @@
     </div>
     <div class="botoom">
       <div class="chat-content" ref="chatContent">
-        <div class="chat-wrapper" v-for="item in chatList" :key="item.id">
-          <div class="chat-friend" v-if="item.uid !== '1001'">
+        <div class="chat-wrapper" v-for="item in chatList">
+          <div class="chat-friend" v-if="item.role != 'user'">
+            <div class="info-time">
+              <img :src="assistantHeadImg" alt="" />
+              <span>{{ item.role }}</span>
+            </div>
             <div class="chat-text" v-if="item.chatType == 0">
               {{ item.msg }}
             </div>
@@ -60,12 +64,14 @@
               </div>
             </div>
             <div class="info-time">
-              <img :src="item.headImg" alt="" />
-              <span>{{ item.name }}</span>
-              <span>{{ item.time }}</span>
             </div>
+            
           </div>
           <div class="chat-me" v-else>
+            <div class="info-time">
+              <span>{{ item.role }}</span>
+              <img :src="assistantHeadImg" alt="" />
+            </div>
             <div class="chat-text" v-if="item.chatType == 0">
               {{ item.msg }}
             </div>
@@ -93,9 +99,6 @@
               </div>
             </div>
             <div class="info-time">
-              <span>{{ item.name }}</span>
-              <span>{{ item.time }}</span>
-              <img :src="item.headImg" alt="" />
             </div>
           </div>
         </div>
@@ -127,6 +130,8 @@ import { getChatMsg } from "@/api/getData";
 import HeadPortrait from "@/components/HeadPortrait";
 import Emoji from "@/components/Emoji";
 import FileCard from "@/components/FileCard.vue";
+
+import axios from "@/util/requests"
 export default {
   components: {
     HeadPortrait,
@@ -134,14 +139,14 @@ export default {
     FileCard,
   },
   props: {
-    frinedInfo: Object,
+    sessionInfo: Object,
     default() {
       return {};
     },
   },
   watch: {
-    frinedInfo() {
-      this.getFriendChatMsg();
+    sessionInfo() {
+      this.getSessionMsg();
     },
   },
   data() {
@@ -149,36 +154,54 @@ export default {
       chatList: [],
       inputMsg: "",
       showEmoji: false,
-      friendInfo: {},
       srcImgList: [],
+      assistantHeadImg: require('@/assets/img/assistant.png')
     };
   },
   mounted() {
-    this.getFriendChatMsg();
+    // this.getFriendChatMsg();
+    this.getSessionMsg();
   },
   methods: {
-    //获取聊天记录
-    getFriendChatMsg() {
-      let params = {
-        frinedId: this.frinedInfo.id,
-      };
-      getChatMsg(params).then((res) => {
-        this.chatList = res;
-        this.chatList.forEach((item) => {
-          if (item.chatType == 2 && item.extend.imgType == 2) {
-            this.srcImgList.push(item.msg);
-          }
-        });
-    this.scrollBottom();
+    // //获取聊天记录
+    // getFriendChatMsg() {
+    //   let params = {
+    //     frinedId: this.frinedInfo.id,
+    //   };
+    //   getChatMsg(params).then((res) => {
+    //     this.chatList = res;
+    //     this.chatList.forEach((item) => {
+    //       if (item.chatType == 2 && item.extend.imgType == 2) {
+    //         this.srcImgList.push(item.msg);
+    //       }
+    //     });
+    // this.scrollBottom();
 
-      });
-    },
-    //发送信息
-    sendMsg(msgList) {
-      this.chatList.push(msgList);
+    //   });
+    // },
+    // 发送信息
+    sendMsg(msg) {
+      msg.role = 'user';
+      this.chatList.push(msg);
+      console.log(this.chatList)
       this.scrollBottom();
+      this.$emit('sessionCardSort', this.sessionInfo.sessionId)
+        axios.post("/chat/getMsg",msg).then(
+          res=>{
+            this.chatList.push(res.data)
+            this.scrollBottom();
+          }
+        )
+
     },
     //获取窗口高度并滚动至最底层
+    getSessionMsg(){
+      console.log(this.sessionInfo)
+      axios.post("/session/getSessionMsg",this.sessionInfo).then(res=>{
+        this.chatList = res.data
+        this.scrollBottom()
+      })
+    },
     scrollBottom() {
       this.$nextTick(() => {
         const scrollDom = this.$refs.chatContent;
@@ -194,15 +217,11 @@ export default {
       if (this.inputMsg) {
         let chatMsg = {
           headImg: require("@/assets/img/head_portrait.jpg"),
-          name: "大毛是小白",
-          time: "09：12 AM",
           msg: this.inputMsg,
           chatType: 0, //信息类型，0文字，1图片
-          uid: "1001", //uid
         };
-        this.sendMsg(chatMsg);
-        this.$emit('personCardSort', this.frinedInfo.id)
         this.inputMsg = "";
+        this.sendMsg(chatMsg)
       } else {
         this.$message({
           message: "消息不能为空哦~",
@@ -214,17 +233,14 @@ export default {
     sendEmoji(msg) {
       let chatMsg = {
         headImg: require("@/assets/img/head_portrait.jpg"),
-        name: "大毛是小白",
-        time: "09：12 AM",
         msg: msg,
         chatType: 1, //信息类型，0文字，1图片
         extend: {
           imgType: 1, //(1表情，2本地图片)
-        },
-        uid: "1001",
+        }
       };
-      this.sendMsg(chatMsg);
       this.clickEmoji();
+      this.sendMsg(chatMsg);
     },
     //发送本地图片
     sendImg(e) {
@@ -232,14 +248,11 @@ export default {
       console.log(e.target.files);
       let chatMsg = {
         headImg: require("@/assets/img/head_portrait.jpg"),
-        name: "大毛是小白",
-        time: "09：12 AM",
         msg: "",
         chatType: 1, //信息类型，0文字，1图片, 2文件
         extend: {
           imgType: 2, //(1表情，2本地图片)
         },
-        uid: "1001",
       };
       let files = e.target.files[0]; //图片文件名
       if (!e || !window.FileReader) return; // 看是否支持FileReader
@@ -249,21 +262,20 @@ export default {
         chatMsg.msg = this.result; //赋值
         _this.srcImgList.push(chatMsg.msg);
       };
-      this.sendMsg(chatMsg);
+
       e.target.files = null;
+      this.sendMsg(chatMsg);
+      
     },
     //发送文件
     sendFile(e) {
       let chatMsg = {
         headImg: require("@/assets/img/head_portrait.jpg"),
-        name: "大毛是小白",
-        time: "09：12 AM",
         msg: "",
         chatType: 2, //信息类型，0文字，1图片, 2文件
         extend: {
           fileType: "", //(1word，2excel，3ppt，4pdf，5zpi, 6txt)
         },
-        uid: "1001",
       };
       let files = e.target.files[0]; //图片文件名
       chatMsg.msg = files;
@@ -295,8 +307,8 @@ export default {
           default:
             chatMsg.extend.fileType = 0;
         }
-        this.sendMsg(chatMsg);
         e.target.files = null;
+        this.sendMsg(chatMsg);
       }
     },
     // 发送语音
@@ -319,7 +331,7 @@ export default {
   position: relative;
 
   .top {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     &::after {
       content: "";
       display: block;
@@ -359,7 +371,7 @@ export default {
   }
   .botoom {
     width: 100%;
-    height: 70vh;
+    height: 77vh;
     background-color: rgb(50, 54, 68);
     border-radius: 20px;
     padding: 20px;

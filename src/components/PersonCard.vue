@@ -1,10 +1,22 @@
 <template>
-  <div class="person-card" :class="{ activeCard: personInfo.id == current }">
+  <div class="person-card" :class="{ activeCard: session.Id == current }">
     <div class="info">
-          <HeadPortrait :imgUrl="personInfo.headImg"></HeadPortrait>
+          <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
           <div class="info-detail">
-            <div class="name">{{ personInfo.name }}</div>
-            <div class="detail">{{ personInfo.detail }}</div>
+            <div class="name"><input type="text"  class="inputName" :readonly="isReadonly" v-model="session.sessionName"
+              @blur="quitEdit" ref="inputName"></div>
+            <div class="detail">{{ session.sessionDetail }}</div>
+          </div>
+          <div>
+            <div class="edit">
+              <i class="el-icon-edit" style="color: white" onmouseover="this.style.color='black'"
+              onmouseout="this.style.color='white'" @click="editSession"></i>
+            </div>
+            <div class="delete">
+              <i class="el-icon-delete" style="color:white" onmouseover="this.style.color='red'"
+              onmouseout="this.style.color='white'" @click="deleteSession(session.sessionId)"
+              ></i>
+            </div>
           </div>
 
     </div>
@@ -13,14 +25,14 @@
 
 <script>
 import HeadPortrait from "./HeadPortrait.vue";
-
+import {mapMutations} from "vuex"
 export default {
   props: {
-    personInfo: {
+    session: {
       default: {
       },
     },
-    pcCurrent: {
+    sessionCurrent: {
       default: ''
     }
   },
@@ -30,16 +42,29 @@ export default {
   data() {
     return {
       current: '',
+      isReadonly: true 
     }
   },
   watch: {
-    pcCurrent: function() {
+    sessionCurrent: function() {
       this.isActive()
     }
   },
   methods: {
+    ...mapMutations(["removeSessionFromList"]),
     isActive() {
-      this.current = this.pcCurrent
+      this.current = this.sessionCurrent
+    }
+    ,
+    editSession(){
+      this.isReadonly = false
+      this.$refs.inputName.focus()
+    },
+    deleteSession(sessionId){
+      this.removeSessionFromList(sessionId)
+    },
+    quitEdit(){
+      this.isReadonly=true
     }
   }
 };
@@ -107,4 +132,37 @@ export default {
       }
     }
 }
+
+.edit{
+  margin-left: 10px;
+  margin-right: 5px;
+  float:right;
+}
+
+.delete{
+  margin-top:10px;
+  margin-left: 10px;
+  margin-right: 5px;
+  float:right;
+}
+.el-button{
+  
+}
+.inputName{
+  width: 90px;
+  background-color: rgb(50, 54, 68);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+  color:white;
+  border:0px;
+  outline: none;
+}
+
+.person-card:hover .inputName{
+  background-color: #1d90f5;
+  transition: 0.3s;
+}
+
 </style>

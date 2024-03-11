@@ -14,38 +14,183 @@ Mock.mock(/friend\/chatMsg/, 'post', (config) => { //三个参数。第一个：
         return chatMsg1004
 })
 
+Mock.mock(/session\/getSessionMsg/,'post', (config)=>{
+    let params = JSON.parse(config.body)
+    if (params.sessionId == "0")
+        return chatMsg01
+    if (params.sessionId == "1")
+        return chatMsg02
+    if (params.sessionId == "2")
+        return chatMsg03
+    return chatMsg04
+})
 
-let friendList = Mock.mock(
-    [
+Mock.mock(/chat\/getMsg/,'post',(config)=>{
+    let params = JSON.parse(config.body)
+    let chatMsgAssistant = Mock.mock(
         {
-            img: "",
-            name: "大毛",
-            detail: "我是大毛",
-            lastMsg: "to do",
-            id: "1002",
-            headImg: require("@/assets/img/head_portrait1.jpg"),
+            headImg: require("@/assets/img/assistant.png"),
+            name: "assitant",
+            msg: "万能答案",
+            chatType: 0,
+            role: "assistant"
+        }
+    )
 
-        },
-        {
-            img: "",
-            name: "小毛",
-            detail: "我是小毛",
-            lastMsg: "dada dw ertgthy j uy",
-            id: "1003",
-            headImg: require("@/assets/img/head_portrait2.jpg"),
+    
 
-        },
-        {
-            img: "",
-            name: "小王",
-            detail: "我是小王",
-            lastMsg: "大萨达萨达所大大萨达",
-            id: "1004",
-            headImg: require("@/assets/img/head_portrait3.jpg"),
+    
 
-        },
-    ]
-)
+    chatMsgAssistant.msg = params.msg+chatMsgAssistant.msg
+    return chatMsgAssistant
+})
+
+Mock.mock(/session\/getSession/,'get',()=>{
+    return sessionList
+})
+
+
+
+
+
+let sessionList = Mock.mock([
+    {
+        sessionName: "历史会话1",
+        sessionDetail: "这是历史会话1",
+        sessionId: "0",
+        headImg: require("@/assets/img/head_portrait1.jpg")
+    },
+    {
+        sessionName: "历史会话2",
+        sessionDetail: "这是历史会话2",
+        sessionId: "1",
+        headImg: require("@/assets/img/head_portrait1.jpg")
+    },
+    {
+        sessionName: "历史会话3",
+        sessionDetail: "这是历史会话3",
+        sessionId: "2",
+        headImg: require("@/assets/img/head_portrait1.jpg")
+    },
+    {
+        sessionName: "历史会话4",
+        sessionDetail: "这是历史会话4",
+        sessionId: "3",
+        headImg: require("@/assets/img/head_portrait1.jpg")
+    },
+])
+
+
+let chatMsg01 = [
+    {
+        role: "user",
+        chatType: 0,
+        msg: "历史对话1"
+       
+    },
+    {
+        name: "assitant",
+        msg: "万能答案",
+        chatType: 0,
+        role: "assistant"
+    },
+]
+
+
+let chatMsg02 = [
+    {
+        role: "user",
+        chatType: 0,
+        msg: "历史对话2"
+       
+    },
+    {
+        name: "assitant",
+        msg: "万能答案",
+        chatType: 0,
+        role: "assistant"
+    },
+]
+
+let chatMsg03 = [
+    {
+        role: "user",
+        chatType: 0,
+        msg: "历史对话3"
+       
+    },
+    {
+        name: "assitant",
+        msg: "万能答案",
+        chatType: 0,
+        role: "assistant"
+    },
+]
+
+let chatMsg04 = [
+    {
+        role: "user",
+        chatType: 0,
+        msg: "历史对话4"
+       
+    },
+    {
+        name: "assitant",
+        msg: "万能答案",
+        chatType: 0,
+        role: "assistant"
+    },
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let chatMsg1002 = Mock.mock(
     [

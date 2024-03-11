@@ -113,7 +113,7 @@ export default {
   }
   .own-pic {
     position: absolute;
-    bottom: 10%;
+    bottom: 5%;
     margin-left: 25px;
   }
 }
