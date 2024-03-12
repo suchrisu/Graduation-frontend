@@ -86,3 +86,98 @@ export function throttle(fn, delay = 200) {
       'aplication/zip': 'zpi',
     }
   }
+
+  export function getTime(){
+    let now = new Date(new Date().getTime())
+      //返回2020-1-1格式
+      var year = now.getFullYear(); //取得4位数的年份
+      var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
+      var date = now.getDate(); //返回日期月份中的天数（1到31）
+      var hour = now.getHours(); //返回日期中的小时数（0到23）
+      var minute = now.getMinutes(); //返回日期中的分钟数（0到59）
+      var second = now.getSeconds(); //返回日期中的秒数（0到59） 
+      //返回2020-01-01格式
+				minute = minute + ''
+				minute = minute.length == 1 ? '0' + minute : minute
+				month = month + ''
+				month = month.length == 1 ? '0' + month : month
+				hour = hour + ''
+				hour = hour.length == 1 ? '0' + hour : hour
+				date = date + ''
+				date = date.length == 1 ? '0' + date : date
+				second = second + ''
+				second = second.length == 1 ? '0' + second : second
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        date +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
+  }
+
+ export function sessionStorageSet(key, value) {
+    if (typeof value === 'object') {
+      value = JSON.stringify(value)
+    }
+    sessionStorage.setItem(key, value)
+}
+
+export function sessionStorageGet(key) {
+    const value = sessionStorage.getItem(key) || '';
+    try {
+      const val = JSON.parse(value);
+      if ('number' === typeof(val)){
+          return value;
+      } else {
+          return val;
+      }
+    } catch (e) {
+        return value;
+    }
+}
+
+export function sessionStorageRemove(key) {
+    sessionStorage.removeItem(key)
+}
+
+export function sessionStorageClearAll() {
+    sessionStorage.clear();
+}
+
+
+export function loadingWindow(){
+  const loading = {
+    lock: true,
+    text: "Loading",
+    spinner: "el-icon-loading",
+    background: "rgba(0, 0, 0, 0.7)",
+  }
+  return loading
+}
+
+export function getDate(){
+  let now = new Date(new Date().getTime())
+  //返回2020-1-1格式
+  var year = now.getFullYear(); //取得4位数的年份
+  var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
+  var date = now.getDate(); //返回日期月份中的天数（1到31） 
+  //返回2020-01-01格式
+    month = month + ''
+    month = month.length == 1 ? '0' + month : month
+    date = date + ''
+    date = date.length == 1 ? '0' + date : date
+    return (
+      year +
+      "-" +
+      month +
+      "-" +
+      date 
+    );
+}

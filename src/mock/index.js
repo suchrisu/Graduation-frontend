@@ -45,9 +45,9 @@ Mock.mock(/chat\/getMsg/,'post',(config)=>{
     return chatMsgAssistant
 })
 
-Mock.mock(/session\/getSession/,'get',()=>{
-    return sessionList
-})
+// Mock.mock(/session\/getSession/,'get',()=>{
+//     return sessionList
+// })
 
 
 

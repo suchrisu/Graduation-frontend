@@ -57,6 +57,7 @@
 </template>
 <script>
 import  api  from "../../api/index";
+import {loadingWindow} from "@/util/util"
 export default {
   name: "RegisterForm",
 
@@ -127,12 +128,7 @@ export default {
   },
   methods: {
     sendRegisterCode() {
-      const loading = this.$loading({
-        lock: true,
-        text: "Loading",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)",
-      });
+      const loading = this.$loading(loadingWindow())
       api
         .sendRegisterCode(this.user.userId)
         .then((res) => {
@@ -158,12 +154,7 @@ export default {
     register(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const loading = this.$loading({
-            lock: true,
-            text: "Loading",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)",
-          });
+          const loading = this.$loading(loadingWindow())
           this.user.userName = this.user.userId;
           api
             .register(this.code, this.user)

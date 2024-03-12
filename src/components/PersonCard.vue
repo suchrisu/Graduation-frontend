@@ -4,7 +4,7 @@
           <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
           <div class="info-detail">
             <div class="name"><input type="text"  class="inputName" :readonly="isReadonly" v-model="session.sessionName"
-              @blur="quitEdit" ref="inputName"></div>
+              @blur="quitEdit(session)" ref="inputName"></div>
             <div class="detail">{{ session.sessionDetail }}</div>
           </div>
           <div>
@@ -26,6 +26,8 @@
 <script>
 import HeadPortrait from "./HeadPortrait.vue";
 import {mapMutations} from "vuex"
+import api from "@/api/index"
+import { loadingWindow } from "@/util/util";
 export default {
   props: {
     session: {
@@ -42,13 +44,17 @@ export default {
   data() {
     return {
       current: '',
-      isReadonly: true 
+      isReadonly: true ,
+      oldName: ''
     }
   },
   watch: {
     sessionCurrent: function() {
       this.isActive()
     }
+  },
+  mounted(){
+    this.oldName = this.session.sessionName
   },
   methods: {
     ...mapMutations(["removeSessionFromList"]),
@@ -61,10 +67,38 @@ export default {
       this.$refs.inputName.focus()
     },
     deleteSession(sessionId){
-      this.removeSessionFromList(sessionId)
+      const loading = this.$loading(loadingWindow())
+      api.removeSession(sessionId).then(res=>{
+        if(res.data.code==1){
+          this.removeSessionFromList(sessionId)
+        }
+        else{
+          this.$message.error(res.data.message)
+        }
+      }).catch(err=>{
+        this.$message.error(err.message)
+      }).finally(()=>{
+        loading.close()
+      })
+      
     },
-    quitEdit(){
-      this.isReadonly=true
+    quitEdit(session){
+      const loading = this.$loading(loadingWindow())
+      api.setSessionName(session).then(res=>{
+        if(res.data.code==1){
+          this.isReadonly=true
+        }
+        else{
+          this.session.sessionName = this.oldName
+          this.$message.error(res.data.message)
+        }
+      }).catch(err=>{  
+        this.session.sessionName = this.oldName
+        this.$message.error(err.message)
+      }).finally(()=>{
+        loading.close()
+      })
+      
     }
   }
 };

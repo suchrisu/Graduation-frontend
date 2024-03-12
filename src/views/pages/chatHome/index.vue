@@ -28,7 +28,7 @@
       <!-- <router-view></router-view> -->
       <div v-if="showChatWindow">
         <ChatWindow
-          :sessionInfo="chatWindowInfo"
+          :session="chatWindowInfo"
           @sessionCardSort="sessionCardSort"
         ></ChatWindow>
       </div>
@@ -44,9 +44,10 @@
 <script>
 import PersonCard from "@/components/PersonCard.vue";
 import ChatWindow from "./chatwindow.vue";
-import axios from "@/util/requests"
-import { getFriend } from "@/api/getData";
+import {sessionStorageGet,getTime, loadingWindow, getDate} from "@/util/util"
 import {mapState,mapMutations} from 'vuex'
+import {nanoid} from 'nanoid'
+import api from "@/api/index"
 export default {
   name: "App",
   components: {
@@ -61,18 +62,62 @@ export default {
     };
   },
   mounted() {
-    axios.get("/session/getSession").then(res=>{
-      this.setSessionList(res.data)
-    })
+    console.log(sessionStorageGet("currentUser"))
+    const loading = this.$loading(loadingWindow())
+    api.getSessions().then(
+      res=>{
+        if(res.data.code==1){
+          this.setSessionList(res.data.data)
+        }
+        else{
+          this.$message.error(res.data.message)
+        }
+      }
+    ).catch(err=>{
+        this.$message.error(err.message)
+      }).finally(()=>{
+        loading.close()
+      })
   },
 
   computed:{
-    ...mapState(["sessionList"])
+    ...mapState(
+        [
+          "sessionList"
+        ]
+      )
   },
   methods: {
-    ...mapMutations(["setSessionList"]),
+    ...mapMutations(
+      [
+        "setSessionList"
+    ])
+      ,
     addSession(){
-
+     let currentUser = sessionStorageGet("currentUser")
+      let newSession = {
+        sessionId: currentUser.userId+"_"+getTime(),
+        sessionOwner: currentUser.userId,
+        sessionName: "新会话",
+        sessionFile: nanoid()+".json",
+        sessionLastTime: getTime()
+      }
+      const loading = this.$loading(loadingWindow())
+      api.addSession(newSession).then(res=>{
+        if(res.data.code==1){
+          let sessionListTemp = this.sessionList;
+          sessionListTemp.unshift(newSession)
+          this.setSessionList(sessionListTemp)      
+        }
+        else{
+          this.$message.error(res.data.message)
+        }  
+      }).catch(err=>{
+        this.$message.error(err.message)
+      }).finally(()=>{
+        loading.close()
+      })
+      
     },
     clickSession(session) {
       this.showChatWindow = true;

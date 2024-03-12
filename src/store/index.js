@@ -11,7 +11,6 @@ export default new Vuex.Store({
   },
   mutations: {
 
-
     setSessionList(state,value){
       state.sessionList = value
     },
@@ -27,6 +26,7 @@ export default new Vuex.Store({
       
       state.sessionList.splice(index,1)
     }
+
   },
   actions: {
   },

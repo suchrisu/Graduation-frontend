@@ -2,11 +2,11 @@
   <div class="chat-window">
     <div class="top">
       <div class="head-pic">
-        <HeadPortrait :imgUrl="sessionInfo.headImg"></HeadPortrait>
+        <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
       </div>
       <div class="info-detail">
-        <div class="name">{{ sessionInfo.sessionName }}</div>
-        <div class="detail">{{ sessionInfo.sessionDetail }}</div>
+        <div class="name">{{ session.sessionName }}</div>
+        <div class="detail">{{ session.sessionDetail }}</div>
       </div>
       <div class="other-fun">
         <span class="iconfont icon-shipin" @click="video"> </span>
@@ -36,30 +36,30 @@
     </div>
     <div class="botoom">
       <div class="chat-content" ref="chatContent">
-        <div class="chat-wrapper" v-for="item in chatList">
+        <div class="chat-wrapper" v-for="(item,index) in chatMsgList" :key="index">
           <div class="chat-friend" v-if="item.role != 'user'">
             <div class="info-time">
               <img :src="assistantHeadImg" alt="" />
               <span>{{ item.role }}</span>
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
-              {{ item.msg }}
+              {{ item.content }}
             </div>
             <div class="chat-img" v-if="item.chatType == 1">
               <img
-                :src="item.msg"
+                :src="item.content"
                 alt="表情"
                 v-if="item.extend.imgType == 1"
                 style="width: 100px; height: 100px"
               />
-              <el-image :src="item.msg" :preview-src-list="srcImgList" v-else>
+              <el-image :src="item.content" :preview-src-list="srcImgList" v-else>
               </el-image>
             </div>
             <div class="chat-img" v-if="item.chatType == 2">
               <div class="word-file">
                 <FileCard
                   :fileType="item.extend.fileType"
-                  :file="item.msg"
+                  :file="item.content"
                 ></FileCard>
               </div>
             </div>
@@ -73,18 +73,18 @@
               <img :src="assistantHeadImg" alt="" />
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
-              {{ item.msg }}
+              {{ item.content }}
             </div>
             <div class="chat-img" v-if="item.chatType == 1">
               <img
-                :src="item.msg"
+                :src="item.content"
                 alt="表情"
                 v-if="item.extend.imgType == 1"
                 style="width: 100px; height: 100px"
               />
               <el-image
                 style="max-width: 300px; border-radius: 10px"
-                :src="item.msg"
+                :src="item.content"
                 :preview-src-list="srcImgList"
                 v-else
               >
@@ -94,7 +94,7 @@
               <div class="word-file">
                 <FileCard
                   :fileType="item.extend.fileType"
-                  :file="item.msg"
+                  :file="item.content"
                 ></FileCard>
               </div>
             </div>
@@ -130,8 +130,7 @@ import { getChatMsg } from "@/api/getData";
 import HeadPortrait from "@/components/HeadPortrait";
 import Emoji from "@/components/Emoji";
 import FileCard from "@/components/FileCard.vue";
-
-import axios from "@/util/requests"
+import api from "@/api/index"
 export default {
   components: {
     HeadPortrait,
@@ -139,19 +138,19 @@ export default {
     FileCard,
   },
   props: {
-    sessionInfo: Object,
+    session: Object,
     default() {
       return {};
     },
   },
   watch: {
-    sessionInfo() {
+    session() {
       this.getSessionMsg();
     },
   },
   data() {
     return {
-      chatList: [],
+      chatMsgList: [],
       inputMsg: "",
       showEmoji: false,
       srcImgList: [],
@@ -169,10 +168,10 @@ export default {
     //     frinedId: this.frinedInfo.id,
     //   };
     //   getChatMsg(params).then((res) => {
-    //     this.chatList = res;
-    //     this.chatList.forEach((item) => {
+    //     this.chatMsgList = res;
+    //     this.chatMsgList.forEach((item) => {
     //       if (item.chatType == 2 && item.extend.imgType == 2) {
-    //         this.srcImgList.push(item.msg);
+    //         this.srcImgList.push(item.content);
     //       }
     //     });
     // this.scrollBottom();
@@ -182,25 +181,46 @@ export default {
     // 发送信息
     sendMsg(msg) {
       msg.role = 'user';
-      this.chatList.push(msg);
-      console.log(this.chatList)
+      this.chatMsgList.push(msg);
+      console.log(this.chatMsgList)
       this.scrollBottom();
-      this.$emit('sessionCardSort', this.sessionInfo.sessionId)
-        axios.post("/chat/getMsg",msg).then(
-          res=>{
-            this.chatList.push(res.data)
+      this.$emit('sessionCardSort', this.session.sessionId)
+  
+      api.chatWithLLM(this.session.sessionFile,msg).then(
+        res=>{
+          if(res.data.code==1){
+            this.chatMsgList = res.data.data;
             this.scrollBottom();
+            console.log("list",this.chatMsgList)
           }
-        )
-
+          else{
+            this.$message.error(res.data.message)
+          }
+        }
+      ).catch(
+        err=>{
+          this.$message.error(err.message)
+        }
+      )
     },
     //获取窗口高度并滚动至最底层
     getSessionMsg(){
-      console.log(this.sessionInfo)
-      axios.post("/session/getSessionMsg",this.sessionInfo).then(res=>{
-        this.chatList = res.data
-        this.scrollBottom()
-      })
+      console.log(this.session)
+      api.getChatMessageList(this.session.sessionId).then(
+        res=>{
+          if(res.data.code==1){
+            this.chatMsgList = res.data.data
+            this.scrollBottom()
+          }
+          else{
+            this.$message.error(res.data.message)
+          }
+        }
+      ).catch(
+        err=>{
+          this.$message.error(err.message)
+        }
+      )
     },
     scrollBottom() {
       this.$nextTick(() => {
@@ -216,8 +236,7 @@ export default {
     sendText() {
       if (this.inputMsg) {
         let chatMsg = {
-          headImg: require("@/assets/img/head_portrait.jpg"),
-          msg: this.inputMsg,
+          content: this.inputMsg,
           chatType: 0, //信息类型，0文字，1图片
         };
         this.inputMsg = "";

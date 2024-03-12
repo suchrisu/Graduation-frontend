@@ -44,6 +44,7 @@
 
 <script>
 import api  from "../../api/index";
+import {sessionStorageGet,sessionStorageSet,loadingWindow} from "@/util/util"
 export default {
   name: "LoginForm",
 
@@ -104,17 +105,12 @@ export default {
     login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const loading = this.$loading({
-            lock: true,
-            text: "Loading",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)",
-          });
+          const loading = this.$loading(loadingWindow())
           api
             .login(this.code, this.user)
             .then((res) => {
-              console.log(res.data);
               if (res.data.code == 1) {
+                sessionStorageSet("currentUser",res.data.data)
                 this.$router.push({
                   path: "/chat",
                 });
