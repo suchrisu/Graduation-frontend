@@ -206,7 +206,7 @@ export default {
     //获取窗口高度并滚动至最底层
     getSessionMsg(){
       console.log(this.session)
-      api.getChatMessageList(this.session.sessionId).then(
+      api.getChatMessageList(this.session.sessionFile).then(
         res=>{
           if(res.data.code==1){
             this.chatMsgList = res.data.data

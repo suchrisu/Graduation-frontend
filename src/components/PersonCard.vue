@@ -1,9 +1,9 @@
 <template>
-  <div class="person-card" :class="{ activeCard: session.Id == current }">
+  <div class="person-card" :class="{ activeCard: session.sessionId == current }">
     <div class="info">
           <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
           <div class="info-detail">
-            <div class="name"><input type="text"  class="inputName" :readonly="isReadonly" v-model="session.sessionName"
+            <div class="name"><input type="text"  class="inputName" :class="{ activeInputName: !isReadonly }" :readonly="isReadonly" v-model="session.sessionName"
               @blur="quitEdit(session)" ref="inputName"></div>
             <div class="detail">{{ session.sessionDetail }}</div>
           </div>
@@ -158,8 +158,19 @@ export default {
     background-color: #1d90f5;
     transition: 0.3s;
     box-shadow: 3px 2px 10px 0px rgba(0, 136, 255);
+    
     .info {
       .info-detail {
+        .name{
+          .inputName{
+            background-color: #1d90f5;
+            cursor: pointer;
+          }
+          .activeInputName{
+            background-color: #1d90f5;
+            cursor: text;
+          }
+        }
         .detail {
           color: #fff;
         }
@@ -194,9 +205,30 @@ export default {
   outline: none;
 }
 
+.activeInputName{
+  width: 90px;
+  background-color: rgb(50, 54, 68);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+  color:white;
+  border:0px;
+  outline: none;
+  cursor: text;
+  
+}
+
 .person-card:hover .inputName{
   background-color: #1d90f5;
   transition: 0.3s;
+  cursor: pointer;
+}
+
+.person-card:hover .activeInputName{
+  background-color: #1d90f5;
+  transition: 0.3s;
+  cursor: text;
 }
 
 </style>

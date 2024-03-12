@@ -42,7 +42,9 @@ export default{
 .background{
   width: 100%;
     height: 100vh;
-    background-image: url(../../assets/loginAside.jpeg);
+    background-image: url(../../assets/bg1.jpg);
+    background-size: cover;
+        background-repeat: no-repeat;
 }
 .left{
     width: 100%;
@@ -54,6 +56,7 @@ export default{
     width: 100%;
     height: 100vh;
     float: right;
+    
 }
 .img{
     width: 100%;
@@ -105,15 +108,16 @@ export default{
 }
 
 /deep/#tab-0{
-  width:189px;
+  width:191px;
   text-align: center;
   border-bottom: 0px;
   opacity: 0.943;
+  float: left;
 }
 /deep/#tab-1{
-  width:189px;
+  width:192px;
   text-align: center;
-
+  float: right;
  
 }
 </style>
