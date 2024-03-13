@@ -1,13 +1,13 @@
 <template>
   <div class="person-card" :class="{ activeCard: session.sessionId == current }">
     <div class="info">
-          <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
+          <!-- <HeadPortrait :imgUrl="sessionImg"></HeadPortrait> -->
           <div class="info-detail">
             <div class="name"><input type="text"  class="inputName" :class="{ activeInputName: !isReadonly }" :readonly="isReadonly" v-model="session.sessionName"
               @blur="quitEdit(session)" ref="inputName"></div>
             <div class="detail">{{ session.sessionDetail }}</div>
           </div>
-          <div>
+          <div class="editDelete">
             <div class="edit">
               <i class="el-icon-edit" style="color: white" onmouseover="this.style.color='black'"
               onmouseout="this.style.color='white'" @click="editSession"></i>
@@ -45,7 +45,8 @@ export default {
     return {
       current: '',
       isReadonly: true ,
-      oldName: ''
+      oldName: '',
+      sessionImg: require("@/assets/img/session1.png")
     }
   },
   watch: {
@@ -106,7 +107,7 @@ export default {
 
 <style lang="scss" scoped>
 .person-card {
-  width: 250px;
+  width: 200px;
   height: 80px;
   border-radius: 10px;
   background-color: rgb(50, 54, 68);
@@ -117,7 +118,7 @@ export default {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 90%;
+    width: 100%;
     transform: translate(-50%, -50%);
     overflow: hidden;
     display: flex;
@@ -178,15 +179,21 @@ export default {
     }
 }
 
+
+.editDelete{
+  margin-left: 5px;
+  float: right;
+  width:20px;
+}
 .edit{
-  margin-left: 10px;
+  margin-left: 15px;
   margin-right: 5px;
   float:right;
 }
 
 .delete{
   margin-top:10px;
-  margin-left: 10px;
+  margin-left: 15px;
   margin-right: 5px;
   float:right;
 }
@@ -194,7 +201,7 @@ export default {
   
 }
 .inputName{
-  width: 90px;
+  width: 150px;
   background-color: rgb(50, 54, 68);
   overflow: hidden;
   white-space: nowrap;
@@ -206,7 +213,7 @@ export default {
 }
 
 .activeInputName{
-  width: 90px;
+  width: 150px;
   background-color: rgb(50, 54, 68);
   overflow: hidden;
   white-space: nowrap;

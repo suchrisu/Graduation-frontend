@@ -2,15 +2,15 @@
   <div class="chat-window">
     <div class="top">
       <div class="head-pic">
-        <HeadPortrait :imgUrl="session.headImg"></HeadPortrait>
+        <HeadPortrait :imgUrl="sessionImg"></HeadPortrait>
       </div>
       <div class="info-detail">
         <div class="name">{{ session.sessionName }}</div>
         <div class="detail">{{ session.sessionDetail }}</div>
       </div>
       <div class="other-fun">
-        <span class="iconfont icon-shipin" @click="video"> </span>
-        <span class="iconfont icon-gf-telephone" @click="telephone"></span>
+        <!-- <span class="iconfont icon-shipin" @click="video"> </span> -->
+        <!-- <span class="iconfont icon-gf-telephone" @click="telephone"></span> -->
         <label for="docFile">
           <span class="iconfont icon-wenjian"></span>
         </label>
@@ -70,7 +70,7 @@
           <div class="chat-me" v-else>
             <div class="info-time">
               <span>{{ item.role }}</span>
-              <img :src="assistantHeadImg" alt="" />
+              <img :src="userImg" alt="" />
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
               {{ item.content }}
@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="chatInputs">
-        <div class="emoji boxinput" @click="clickEmoji">
+        <!-- <div class="emoji boxinput" @click="clickEmoji">
           <img src="@/assets/img/emoji/smiling-face.png" alt="" />
         </div>
         <div class="emoji-content">
@@ -113,7 +113,7 @@
             @sendEmoji="sendEmoji"
             @closeEmoji="clickEmoji"
           ></Emoji>
-        </div>
+        </div> -->
         <input class="inputs" v-model="inputMsg" @keyup.enter="sendText" />
         <div class="send boxinput" @click="sendText">
           <img src="@/assets/img/emoji/rocket.png" alt="" />
@@ -145,6 +145,7 @@ export default {
   },
   watch: {
     session() {
+      console.log("watchsession")
       this.getSessionMsg();
     },
   },
@@ -154,7 +155,9 @@ export default {
       inputMsg: "",
       showEmoji: false,
       srcImgList: [],
-      assistantHeadImg: require('@/assets/img/assistant.png')
+      sessionImg: require("@/assets/img/session1.png"),
+      assistantHeadImg: require('@/assets/img/assistant.png'),
+      userImg: require("@/assets/img/userHeader.jpg")
     };
   },
   mounted() {
@@ -350,7 +353,7 @@ export default {
   position: relative;
 
   .top {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     &::after {
       content: "";
       display: block;
@@ -390,17 +393,17 @@ export default {
   }
   .botoom {
     width: 100%;
-    height: 77vh;
+    height: 82vh;
     background-color: rgb(50, 54, 68);
     border-radius: 20px;
-    padding: 20px;
+    padding: 1px;
     box-sizing: border-box;
     position: relative;
     .chat-content {
       width: 100%;
       height: 85%;
       overflow-y: scroll;
-      padding: 20px;
+      padding: 15px;
       box-sizing: border-box;
       &::-webkit-scrollbar {
         width: 0; /* Safari,Chrome 隐藏滚动条 */
@@ -413,15 +416,16 @@ export default {
         .chat-friend {
           width: 100%;
           float: left;
-          margin-bottom: 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
+          margin-bottom: 0px;
+          position: relative;
           .chat-text {
+            float: left;
             max-width: 90%;
-            padding: 20px;
-            border-radius: 20px 20px 20px 5px;
+            padding-top:10px;
+            padding-bottom:10px;
+            padding-left: 15px;
+            padding-right: 15px;            
+            border-radius: 10px 10px 10px 2px;
             background-color: rgb(56, 60, 75);
             color: #fff;
             &:hover {
@@ -455,17 +459,16 @@ export default {
         .chat-me {
           width: 100%;
           float: right;
-          margin-bottom: 20px;
+          margin-bottom: 0px;
           position: relative;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-end;
           .chat-text {
             float: right;
             max-width: 90%;
-            padding: 20px;
-            border-radius: 20px 20px 5px 20px;
+            padding-top:10px;
+            padding-bottom:10px;
+            padding-left: 15px;
+            padding-right: 15px;            
+            border-radius: 10px 10px 2px 10px;
             background-color: rgb(29, 144, 245);
             color: #fff;
             &:hover {
@@ -506,10 +509,10 @@ export default {
       }
     }
     .chatInputs {
-      width: 90%;
+      width: 96%;
       position: absolute;
       bottom: 0;
-      margin: 3%;
+      margin: 1%;
       display: flex;
       .boxinput {
         width: 50px;

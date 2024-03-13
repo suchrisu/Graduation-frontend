@@ -87,6 +87,13 @@ export default {
         ]
       )
   },
+  watch:{
+    sessionList(){
+      if(this.sessionList.length==0){
+        this.showChatWindow = false;
+      }
+    }
+  },
   methods: {
     ...mapMutations(
       [
@@ -149,7 +156,7 @@ export default {
   // margin-top: 20px;
   display: flex;
   .chatLeft {
-    width: 280px;
+    width: 220px;
     .title {
       color: #fff;
       padding-left: 10px;
@@ -161,9 +168,10 @@ export default {
         color: rgb(176, 178, 189);
       }
       .person-cards-wrapper {
+        width:210px;
         padding-left: 10px;
-        height: 68vh;
-        margin-top: 20px;
+        height: 69vh;
+        margin-top: 15px;
         overflow: hidden;
         overflow-y: scroll;
         box-sizing: border-box;
@@ -194,11 +202,11 @@ export default {
 }
 
 .addSession{
-  margin-left: 65px;
+  margin-left: 20px;
 }
 
 .el-button{
-  font-size: 15px;
+  font-size: 14px;
   border-radius: 10px;
   background-color: rgb(50, 54, 68);
   cursor: pointer;
