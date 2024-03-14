@@ -13,4 +13,7 @@ export default {
 
   chatWithLLM: 'chat/chatWithLLM',
   getChatMessageList: '/chat/getChatMessageList',
+
+  updateUser: 'user/updateUser',
+  logOut: 'user/logOut'
 }

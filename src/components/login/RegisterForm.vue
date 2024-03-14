@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     sendRegisterCode() {
-      const loading = this.$loading(loadingWindow())
+      const loading = loadingWindow();
       api
         .sendRegisterCode(this.user.userId)
         .then((res) => {
@@ -154,7 +154,7 @@ export default {
     register(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const loading = this.$loading(loadingWindow())
+          const loading = loadingWindow();
           this.user.userName = this.user.userId
           api
             .register(this.code, this.user)

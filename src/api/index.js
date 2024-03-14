@@ -38,4 +38,11 @@ export default {
   getChatMessageList(sessionFile) {
     return axios.get(path.getChatMessageList + '?sessionFile=' + sessionFile)
   },
+
+  updateUser(user){
+    return axios.post(path.updateUser,user);
+  },
+  logOut(){
+    return axios.get(path.logOut);
+  }
 }

@@ -104,7 +104,7 @@ export default {
     login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const loading = this.$loading(loadingWindow())
+          const loading = loadingWindow();
           api
             .login(this.code, this.user)
             .then((res) => {

@@ -1,3 +1,5 @@
+import { ElLoading } from "element-plus"
+
 //防抖
 export function debounce(fn) {
   console.log(1)
@@ -144,15 +146,25 @@ export function sessionStorageClearAll() {
   sessionStorage.clear()
 }
 
-export function loadingWindow() {
-  const loading = {
+
+
+export function loadingWindow(){
+  const loading = ElLoading.service({
     lock: true,
     text: 'Loading',
-    spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.7)',
-  }
-  return loading
+  })
+  return loading;
 }
+// export function loadingWindow() {
+//   const loading = {
+//     lock: true,
+//     text: 'Loading',
+//     spinner: 'el-icon-loading',
+//     background: 'rgba(0, 0, 0, 0.7)',
+//   }
+//   return loading
+// }
 
 export function getDate() {
   let now = new Date(new Date().getTime())

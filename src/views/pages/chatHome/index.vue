@@ -65,7 +65,7 @@ export default {
   },
   mounted() {
     console.log(sessionStorageGet('currentUser'))
-    const loading = this.$loading(loadingWindow())
+    const loading = loadingWindow()
     api
       .getSessions()
       .then((res) => {
@@ -103,7 +103,7 @@ export default {
         sessionFile: nanoid() + '.json',
         sessionLastTime: getTime(),
       }
-      const loading = this.$loading(loadingWindow())
+      const loading = loadingWindow()
       api
         .addSession(newSession)
         .then((res) => {

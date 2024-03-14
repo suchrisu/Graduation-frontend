@@ -76,7 +76,7 @@ export default {
       this.$refs.inputName.focus()
     },
     deleteSession(sessionId) {
-      const loading = this.$loading(loadingWindow())
+      const loading = loadingWindow()
       api
         .removeSession(sessionId)
         .then((res) => {
@@ -94,7 +94,7 @@ export default {
         })
     },
     quitEdit(session) {
-      const loading = this.$loading(loadingWindow())
+      const loading = loadingWindow()
       api
         .setSessionName(session)
         .then((res) => {
