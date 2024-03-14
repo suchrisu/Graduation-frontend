@@ -12,13 +12,13 @@
 </template>
 
 <script>
-import Nav from "../components/Nav.vue";
+import Nav from '../components/Nav.vue'
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Nav,
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

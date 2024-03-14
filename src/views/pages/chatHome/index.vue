@@ -7,7 +7,7 @@
       <div class="online-person">
         <span class="onlin-text">会话列表</span>
         <span class="addSession">
-          <el-button icon="el-icon-plus" @click="addSession">新建会话</el-button>
+          <el-button @click="addSession"><el-icon class="plusIcon"><Plus/></el-icon>新建会话</el-button>
         </span>
         <div class="person-cards-wrapper">
           <div
@@ -42,121 +42,117 @@
 </template>
 
 <script>
-import PersonCard from "@/components/PersonCard.vue";
-import ChatWindow from "./chatwindow.vue";
-import {sessionStorageGet,getTime, loadingWindow, getDate} from "@/util/util"
-import {mapState,mapMutations} from 'vuex'
-import {nanoid} from 'nanoid'
-import api from "@/api/index"
+import PersonCard from '@/components/PersonCard.vue'
+import ChatWindow from './chatwindow.vue'
+import {Plus} from "@element-plus/icons-vue"
+import { sessionStorageGet, getTime, loadingWindow, getDate } from '@/util/util'
+import { mapState, mapMutations } from 'vuex'
+import { nanoid } from 'nanoid'
+import api from '@/api/index'
 export default {
-  name: "App",
-  components: {
-    PersonCard,
-    ChatWindow,
-  },
   data() {
     return {
-      sessionCurrent: "",
+      sessionCurrent: '',
       showChatWindow: false,
       chatWindowInfo: {},
-    };
-  },
-  mounted() {
-    console.log(sessionStorageGet("currentUser"))
-    const loading = this.$loading(loadingWindow())
-    api.getSessions().then(
-      res=>{
-        if(res.data.code==1){
-          this.setSessionList(res.data.data)
-        }
-        else{
-          this.$message.error(res.data.message)
-        }
-      }
-    ).catch(err=>{
-        this.$message.error(err.message)
-      }).finally(()=>{
-        loading.close()
-      })
-  },
-
-  computed:{
-    ...mapState(
-        [
-          "sessionList"
-        ]
-      )
-  },
-  watch:{
-    sessionList(){
-      if(this.sessionList.length==0){
-        this.showChatWindow = false;
-      }
+      Plus: Plus
     }
   },
-  methods: {
-    ...mapMutations(
-      [
-        "setSessionList"
-    ])
-      ,
-    addSession(){
-     let currentUser = sessionStorageGet("currentUser")
-      let newSession = {
-        sessionId: currentUser.userId+"_"+getTime(),
-        sessionOwner: currentUser.userId,
-        sessionName: "新会话",
-        sessionFile: nanoid()+".json",
-        sessionLastTime: getTime()
-      }
-      const loading = this.$loading(loadingWindow())
-      api.addSession(newSession).then(res=>{
-        if(res.data.code==1){
-          let sessionListTemp = this.sessionList;
-          sessionListTemp.unshift(newSession)
-          this.setSessionList(sessionListTemp)      
-        }
-        else{
+  name: 'App',
+  components: {
+    PersonCard,
+    ChatWindow
+  },
+  mounted() {
+    console.log(sessionStorageGet('currentUser'))
+    const loading = this.$loading(loadingWindow())
+    api
+      .getSessions()
+      .then((res) => {
+        if (res.data.code == 1) {
+          this.setSessionList(res.data.data)
+        } else {
           this.$message.error(res.data.message)
-        }  
-      }).catch(err=>{
+        }
+      })
+      .catch((err) => {
         this.$message.error(err.message)
-      }).finally(()=>{
+      })
+      .finally(() => {
         loading.close()
       })
-      
+  },
+  computed: {
+    ...mapState(['sessionList']),
+  },
+  watch: {
+    sessionList() {
+      if (this.sessionList.length == 0) {
+        this.showChatWindow = false
+      }
+    },
+  },
+  methods: {
+    ...mapMutations(['setSessionList']),
+    addSession() {
+      let currentUser = sessionStorageGet('currentUser')
+      let newSession = {
+        sessionId: currentUser.userId + '_' + getTime(),
+        sessionOwner: currentUser.userId,
+        sessionName: '新会话',
+        sessionFile: nanoid() + '.json',
+        sessionLastTime: getTime(),
+      }
+      const loading = this.$loading(loadingWindow())
+      api
+        .addSession(newSession)
+        .then((res) => {
+          if (res.data.code == 1) {
+            let sessionListTemp = this.sessionList
+            sessionListTemp.unshift(newSession)
+            this.setSessionList(sessionListTemp)
+          } else {
+            this.$message.error(res.data.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error(err.message)
+        })
+        .finally(() => {
+          loading.close()
+        })
     },
     clickSession(session) {
-      this.showChatWindow = true;
-      this.chatWindowInfo = session;
-      this.sessionCurrent = session.sessionId;
+      this.showChatWindow = true
+      this.chatWindowInfo = session
+      this.sessionCurrent = session.sessionId
     },
     sessionCardSort(id) {
-      let sessionListTemp = this.sessionList;
+      let sessionListTemp = this.sessionList
       if (id !== sessionListTemp[0].sessionId) {
-        console.log(id);
-        let nowSessionInfo;
+        console.log(id)
+        let nowSessionInfo
         for (let i = 0; i < sessionListTemp.length; i++) {
           if (sessionListTemp[i].sessionId == id) {
-            nowSessionInfo = sessionListTemp[i];
-            sessionListTemp.splice(i, 1);
-            break;
+            nowSessionInfo = sessionListTemp[i]
+            sessionListTemp.splice(i, 1)
+            break
           }
         }
-        sessionListTemp.unshift(nowSessionInfo);
+        sessionListTemp.unshift(nowSessionInfo)
         this.setSessionList(sessionListTemp)
       }
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
 .chatHome {
-  // margin-top: 20px;
+  /*// margin-top: 20px;*/
   display: flex;
   .chatLeft {
-    width: 220px;
+    width: 230px;
     .title {
       color: #fff;
       padding-left: 10px;
@@ -168,7 +164,7 @@ export default {
         color: rgb(176, 178, 189);
       }
       .person-cards-wrapper {
-        width:210px;
+        width: 230px;
         padding-left: 10px;
         height: 69vh;
         margin-top: 15px;
@@ -200,12 +196,12 @@ export default {
     }
   }
 }
-
-.addSession{
+.addSession {
   margin-left: 20px;
 }
-
-.el-button{
+.el-button {
+  padding-top: 20px;
+  padding-bottom: 20px;
   font-size: 14px;
   border-radius: 10px;
   background-color: rgb(50, 54, 68);
@@ -216,7 +212,13 @@ export default {
     background-color: #1d90f5;
     transition: 0.3s;
     box-shadow: 0px 0px 10px 0px rgba(0, 136, 255);
-    
   }
+}
+
+.plusIcon{
+  margin: 10px 5px;
+  width: 50%;
+  height: 100%;
+
 }
 </style>

@@ -1,16 +1,22 @@
 <template>
   <div class="file-card">
-    <img src="@/assets/img/fileImg/unknowfile.png" alt="" v-if="fileType == 0"/>
-    <img src="@/assets/img/fileImg/word.png" alt="" v-else-if="fileType == 1"/>
-    <img src="@/assets/img/fileImg/excel.png" alt="" v-else-if="fileType == 2"/>
-    <img src="@/assets/img/fileImg/ppt.png" alt="" v-else-if="fileType == 3"/>
-    <img src="@/assets/img/fileImg/pdf.png" alt="" v-else-if="fileType == 4"/>
-    <img src="@/assets/img/fileImg/zpi.png" alt="" v-else-if="fileType == 5"/>
-    <img src="@/assets/img/fileImg/txt.png" alt="" v-else/>
+    <img
+      src="@/assets/img/fileImg/unknowfile.png"
+      alt=""
+      v-if="fileType == 0"
+    />
+    <img src="@/assets/img/fileImg/word.png" alt="" v-else-if="fileType == 1" />
+    <img
+      src="@/assets/img/fileImg/excel.png"
+      alt=""
+      v-else-if="fileType == 2"
+    />
+    <img src="@/assets/img/fileImg/ppt.png" alt="" v-else-if="fileType == 3" />
+    <img src="@/assets/img/fileImg/pdf.png" alt="" v-else-if="fileType == 4" />
+    <img src="@/assets/img/fileImg/zpi.png" alt="" v-else-if="fileType == 5" />
+    <img src="@/assets/img/fileImg/txt.png" alt="" v-else />
     <div class="word">
-      <span
-        >{{file.name || '未知'}}</span
-      >
+      <span>{{ file.name || '未知' }}</span>
       <span>154kb</span>
     </div>
   </div>
@@ -23,19 +29,19 @@ export default {
     fileType: Number,
     file: File,
     default() {
-      return {};
+      return {}
     },
   },
   watch: {
     file() {
-      console.log(this.file);
+      console.log(this.file)
     },
-  },  
+  },
   mounted() {
-    console.log(this.file);
-    console.log(this.fileType);
-  }
-};
+    console.log(this.file)
+    console.log(this.fileType)
+  },
+}
 </script>
 
 <style lang="scss" scoped>

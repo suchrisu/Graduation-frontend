@@ -5,6 +5,7 @@
       ref="form"
       :model="user"
       :rules="rules"
+      size="large"
     >
       <el-form-item label="登录角色" class="select">
         <el-select v-model="user.rolePowerId" placeholder="请选择登录角色">
@@ -13,7 +14,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="邮箱" prop="userId" >
+      <el-form-item label="邮箱" prop="userId">
         <el-input
           v-model="user.userId"
           placeholder="请输入注册时的邮箱"
@@ -43,64 +44,62 @@
 </template>
 
 <script>
-import api  from "../../api/index";
-import {sessionStorageGet,sessionStorageSet,loadingWindow} from "@/util/util"
+import api from '../../api/index'
+import {
+  sessionStorageGet,
+  sessionStorageSet,
+  loadingWindow,
+} from '@/util/util'
 export default {
-  name: "LoginForm",
+  name: 'LoginForm',
 
   data() {
     var checkEmail = (rule, value, cb) => {
-      if(value == ""){
-        return cb(new Error("请输入邮箱!"))
+      if (value == '') {
+        return cb(new Error('请输入邮箱!'))
       }
       //验证邮箱的正则表达式
-      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
       if (regEmail.test(value)) {
         //合法的邮箱
-        return cb();
-      }
-      cb(new Error("请输入合法的邮箱!"));
-    };
-
-    var checkPassword = (rule,value,cb) => {
-      if(value != ""){
         return cb()
       }
-      cb(new Error("请输入密码!"))
+      cb(new Error('请输入合法的邮箱!'))
+    }
+
+    var checkPassword = (rule, value, cb) => {
+      if (value != '') {
+        return cb()
+      }
+      cb(new Error('请输入密码!'))
     }
     var checkCode = (rule, value, cb) => {
-      if (this.code != "") {
-        return cb();
+      if (this.code != '') {
+        return cb()
       }
-      cb(new Error("请输入验证码!"));
-    };
+      cb(new Error('请输入验证码!'))
+    }
     return {
-      codeurl: "http://localhost/user/loginCode",
-      labelPostion: "top",
+      codeurl: 'http://localhost/user/loginCode',
+      labelPostion: 'top',
       user: {
-        userId: "",
-        userPassword: "",
-        rolePowerId: "2",
-        userName: "",
+        userId: '',
+        userPassword: '',
+        rolePowerId: '2',
+        userName: '',
       },
-      code: "",
+      code: '',
       rules: {
-        userId: [
-          { validator: checkEmail, trigger: "blur" }
-        ],
-        userPassword: [
-          { validator: checkPassword, trigger: "blur" },
-        ],
-        codeProp: [
-          { validator: checkCode,trigger: "blur" },
-        ],
+        userId: [{ validator: checkEmail, trigger: 'blur' }],
+        userPassword: [{ validator: checkPassword, trigger: 'blur' }],
+        codeProp: [{ validator: checkCode, trigger: 'blur' }],
       },
-    };
+    }
   },
   methods: {
     getCode() {
       this.codeurl =
-        "http://localhost/user/loginCode" + "?random=" + Math.random();
+        'http://localhost/user/loginCode' + '?random=' + Math.random()
     },
     login(formName) {
       this.$refs[formName].validate((valid) => {
@@ -110,29 +109,29 @@ export default {
             .login(this.code, this.user)
             .then((res) => {
               if (res.data.code == 1) {
-                sessionStorageSet("currentUser",res.data.data)
+                sessionStorageSet('currentUser', res.data.data)
                 this.$router.push({
-                  path: "/chat",
-                });
-                this.$message.success("欢迎" + res.data.data.userName + "!");
+                  path: '/chat',
+                })
+                this.$message.success('欢迎' + res.data.data.userName + '!')
               } else {
-                this.$message.error(res.data.message);
+                this.$message.error(res.data.message)
               }
             })
             .catch((err) => {
-              this.$message.error(err.message);
+              this.$message.error(err.message)
             })
             .finally(() => {
-              loading.close();
-            });
-          this.butonLoading = false;
+              loading.close()
+            })
+          this.butonLoading = false
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -140,7 +139,6 @@ export default {
 }
 .userPasswordInput {
 }
-
 .codeImage {
   width: 50%;
   height: 39px;
@@ -158,7 +156,7 @@ export default {
   width: 40%;
 }
 .el-form-item {
-  margin-top: 5px;
+  margin-top: 20px;
   margin-bottom: 0px;
   position: relative;
   left: 50%;
@@ -166,7 +164,6 @@ export default {
   transform: translate(-50%);
   height: auto;
 }
-
 .el-button {
   margin-top: 15px;
   width: 40%;
@@ -174,16 +171,16 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-
 .el-form {
   position: relative;
   left: 50%;
   top: 30%;
+  padding-top: 5px;
   transform: translate(-50%, -30%);
   width: 100%;
 }
-
 .select {
-  height: 90px;
+  margin-top: 20px;
+  
 }
 </style>

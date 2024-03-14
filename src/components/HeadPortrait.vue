@@ -1,38 +1,35 @@
 <template>
   <div class="head-portrait">
-    <img :src="imgUrl" alt="">
+    <img :src="imgUrl" alt="" />
   </div>
 </template>
 
 <script>
 export default {
-    props: {
-        imgUrl:{ default:require('@/assets/img/head_portrait.jpg')}
-    }
+  props: {
+    imgUrl: { default: require('@/assets/img/head_portrait.jpg') },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .head-portrait {
-    width: 55px;
-    height: 55px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%; /*// border: 2px solid rgb(137,140,151);*/
+  border: 0px solid rgb(255, 255, 255);
+  position: relative;
+  img {
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
-    // border: 2px solid rgb(137,140,151);
-    border: 0px solid rgb(255, 255, 255);
-    position:relative;
-    
-    img {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        // padding: 2px;
-        box-sizing: border-box;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        vertical-align: middle;
-        
-    }
+    // padding: 2px;
+    box-sizing: border-box;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    vertical-align: middle;
+  }
 }
 </style>

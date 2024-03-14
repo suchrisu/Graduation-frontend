@@ -1,108 +1,120 @@
 <template>
-  <div class="person-card" :class="{ activeCard: session.sessionId == current }">
+  <div
+    class="person-card"
+    :class="{ activeCard: session.sessionId == current }"
+  >
     <div class="info">
-          <!-- <HeadPortrait :imgUrl="sessionImg"></HeadPortrait> -->
-          <div class="info-detail">
-            <div class="name"><input type="text"  class="inputName" :class="{ activeInputName: !isReadonly }" :readonly="isReadonly" v-model="session.sessionName"
-              @blur="quitEdit(session)" ref="inputName"></div>
-            <div class="detail">{{ session.sessionDetail }}</div>
-          </div>
-          <div class="editDelete">
-            <div class="edit">
-              <i class="el-icon-edit" style="color: white" onmouseover="this.style.color='black'"
-              onmouseout="this.style.color='white'" @click="editSession"></i>
-            </div>
-            <div class="delete">
-              <i class="el-icon-delete" style="color:white" onmouseover="this.style.color='red'"
-              onmouseout="this.style.color='white'" @click="deleteSession(session.sessionId)"
-              ></i>
-            </div>
-          </div>
-
+      <!-- <HeadPortrait :imgUrl="sessionImg"></HeadPortrait> -->
+      <div class="info-detail">
+        <div class="name">
+          <input
+            type="text"
+            class="inputName"
+            :class="{ activeInputName: !isReadonly }"
+            :readonly="isReadonly"
+            v-model="session.sessionName"
+            @blur="quitEdit(session)"
+            ref="inputName"
+          />
+        </div>
+        <div class="detail">{{ session.sessionDetail }}</div>
+      </div>
+      <div class="editDelete">
+        <div class="edit">
+          <el-icon style="color: white" @click="editSession"  onmouseover="this.style.color='black'"
+          onmouseout="this.style.color='white'" ><Edit /></el-icon>
+        </div>
+        <div class="delete">
+          <el-icon style="color: white" onmouseover="this.style.color='red'"
+          onmouseout="this.style.color='white'" @click="deleteSession(session.sessionId)"><Delete /></el-icon>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import HeadPortrait from "./HeadPortrait.vue";
-import {mapMutations} from "vuex"
-import api from "@/api/index"
-import { loadingWindow } from "@/util/util";
+import HeadPortrait from './HeadPortrait.vue'
+import { mapMutations } from 'vuex'
+import api from '@/api/index'
+import { loadingWindow } from '@/util/util'
 export default {
-  props: {
-    session: {
-      default: {
-      },
-    },
-    sessionCurrent: {
-      default: ''
-    }
-  },
   components: {
     HeadPortrait,
+  },
+  props: {
+    session: {
+      default: {},
+    },
+    sessionCurrent: {
+      default: '',
+    },
   },
   data() {
     return {
       current: '',
-      isReadonly: true ,
+      isReadonly: true,
       oldName: '',
-      sessionImg: require("@/assets/img/session1.png")
+      sessionImg: require('@/assets/img/session1.png'),
     }
   },
   watch: {
-    sessionCurrent: function() {
+    sessionCurrent: function () {
       this.isActive()
-    }
+    },
   },
-  mounted(){
+  mounted() {
     this.oldName = this.session.sessionName
   },
   methods: {
-    ...mapMutations(["removeSessionFromList"]),
+    ...mapMutations(['removeSessionFromList']),
     isActive() {
       this.current = this.sessionCurrent
-    }
-    ,
-    editSession(){
+    },
+    editSession() {
       this.isReadonly = false
       this.$refs.inputName.focus()
     },
-    deleteSession(sessionId){
+    deleteSession(sessionId) {
       const loading = this.$loading(loadingWindow())
-      api.removeSession(sessionId).then(res=>{
-        if(res.data.code==1){
-          this.removeSessionFromList(sessionId)
-        }
-        else{
-          this.$message.error(res.data.message)
-        }
-      }).catch(err=>{
-        this.$message.error(err.message)
-      }).finally(()=>{
-        loading.close()
-      })
-      
+      api
+        .removeSession(sessionId)
+        .then((res) => {
+          if (res.data.code == 1) {
+            this.removeSessionFromList(sessionId)
+          } else {
+            this.$message.error(res.data.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error(err.message)
+        })
+        .finally(() => {
+          loading.close()
+        })
     },
-    quitEdit(session){
+    quitEdit(session) {
       const loading = this.$loading(loadingWindow())
-      api.setSessionName(session).then(res=>{
-        if(res.data.code==1){
-          this.isReadonly=true
-        }
-        else{
+      api
+        .setSessionName(session)
+        .then((res) => {
+          if (res.data.code == 1) {
+            this.isReadonly = true
+          } else {
+            this.session.sessionName = this.oldName
+            this.$message.error(res.data.message)
+          }
+        })
+        .catch((err) => {
           this.session.sessionName = this.oldName
-          this.$message.error(res.data.message)
-        }
-      }).catch(err=>{  
-        this.session.sessionName = this.oldName
-        this.$message.error(err.message)
-      }).finally(()=>{
-        loading.close()
-      })
-      
-    }
-  }
-};
+          this.$message.error(err.message)
+        })
+        .finally(() => {
+          loading.close()
+        })
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -156,86 +168,76 @@ export default {
   }
 }
 .activeCard {
-    background-color: #1d90f5;
-    transition: 0.3s;
-    box-shadow: 3px 2px 10px 0px rgba(0, 136, 255);
-    
-    .info {
-      .info-detail {
-        .name{
-          .inputName{
-            background-color: #1d90f5;
-            cursor: pointer;
-          }
-          .activeInputName{
-            background-color: #1d90f5;
-            cursor: text;
-          }
+  background-color: #1d90f5;
+  transition: 0.3s;
+  box-shadow: 3px 2px 10px 0px rgba(0, 136, 255);
+  .info {
+    .info-detail {
+      .name {
+        .inputName {
+          background-color: #1d90f5;
+          cursor: pointer;
         }
-        .detail {
-          color: #fff;
+        .activeInputName {
+          background-color: #1d90f5;
+          cursor: text;
         }
       }
+      .detail {
+        color: #fff;
+      }
     }
+  }
 }
-
-
-.editDelete{
+.editDelete {
   margin-left: 5px;
   float: right;
-  width:20px;
+  width: 20px;
 }
-.edit{
+.edit {
   margin-left: 15px;
   margin-right: 5px;
-  float:right;
+  float: right;
 }
-
-.delete{
-  margin-top:10px;
+.delete {
+  margin-top: 10px;
   margin-left: 15px;
   margin-right: 5px;
-  float:right;
+  float: right;
 }
-.el-button{
-  
+.el-button {
 }
-.inputName{
+.inputName {
   width: 150px;
   background-color: rgb(50, 54, 68);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-bottom: 5px;
-  color:white;
-  border:0px;
+  color: white;
+  border: 0px;
   outline: none;
 }
-
-.activeInputName{
+.activeInputName {
   width: 150px;
   background-color: rgb(50, 54, 68);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-bottom: 5px;
-  color:white;
-  border:0px;
+  color: white;
+  border: 0px;
   outline: none;
   cursor: text;
-  
 }
-
-.person-card:hover .inputName{
+.person-card:hover .inputName {
   background-color: #1d90f5;
   transition: 0.3s;
   cursor: pointer;
 }
-
-.person-card:hover .activeInputName{
+.person-card:hover .activeInputName {
   background-color: #1d90f5;
   transition: 0.3s;
   cursor: text;
 }
-
 </style>

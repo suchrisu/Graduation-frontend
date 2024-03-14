@@ -6,6 +6,7 @@
       :model="user"
       status-icon
       :rules="rules"
+      size="large"
     >
       <el-form-item label="邮箱" prop="userId">
         <el-input
@@ -55,76 +56,75 @@
     </el-form>
   </div>
 </template>
+
 <script>
-import  api  from "../../api/index";
-import {loadingWindow} from "@/util/util"
+import api from '../../api/index'
+import { loadingWindow } from '@/util/util'
 export default {
-  name: "RegisterForm",
+  name: 'RegisterForm',
 
   data() {
     var checkEmail = (rule, value, cb) => {
-      if (value == "") {
-        return cb(new Error("请输入邮箱!"));
+      if (value == '') {
+        return cb(new Error('请输入邮箱!'))
       }
       //验证邮箱的正则表达式
-      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
       if (regEmail.test(value)) {
         //合法的邮箱
-        return cb();
+        return cb()
       }
-      cb(new Error("请输入合法的邮箱!"));
-    };
+      cb(new Error('请输入合法的邮箱!'))
+    }
 
     var checkPassword = (rule, value, cb) => {
-      if (value == "") {
-        return cb(new Error("请输入密码!"));
+      if (value == '') {
+        return cb(new Error('请输入密码!'))
       }
-      const regPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+      const regPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
       if (regPassword.test(value)) {
-        return cb();
+        return cb()
       }
 
-      cb(
-        new Error("密码最少八个字符，且包含大小写字母和数字!")
-      );
-    };
+      cb(new Error('密码最少八个字符，且包含大小写字母和数字!'))
+    }
 
     var checkCheckPassword = (rule, value, cb) => {
-      if(this.userCheckPassword==""){
-        return cb(new Error("请输入密码!"))
+      if (this.userCheckPassword == '') {
+        return cb(new Error('请输入密码!'))
       }
       if (this.user.userPassword != this.userCheckPassword) {
-        return cb(new Error("两次输入的密码不一致!"));
+        return cb(new Error('两次输入的密码不一致!'))
       }
       return cb()
-    };
+    }
     var checkCode = (rule, value, cb) => {
-      if (this.code != "") {
-        return cb();
+      if (this.code != '') {
+        return cb()
       }
-      cb(new Error("请输入注册码!"));
-    };
+      cb(new Error('请输入注册码!'))
+    }
     return {
-      labelPostion: "top",
+      labelPostion: 'top',
       user: {
-        userId: "",
-        userPassword: "",
-        rolePowerId: "2",
-        userName: "",
+        userId: '',
+        userPassword: '',
+        rolePowerId: '2',
+        userName: '',
       },
-      code: "",
-      userCheckPassword: "",
+      code: '',
+      userCheckPassword: '',
       buttonDisabled: false,
       interval: null,
-      time: "",
-      sendCodeText: "发送注册码",
+      time: '',
+      sendCodeText: '发送注册码',
       rules: {
-        userId: [{ validator: checkEmail, trigger: "blur" }],
-        userPassword: [{ validator: checkPassword, trigger: "blur" }],
-        userCheckPassword: [{ validator: checkCheckPassword, trigger: "blur" }],
-        code: [{ validator: checkCode, trigger: "blur" }],
+        userId: [{ validator: checkEmail, trigger: 'blur' }],
+        userPassword: [{ validator: checkPassword, trigger: 'blur' }],
+        userCheckPassword: [{ validator: checkCheckPassword, trigger: 'blur' }],
+        code: [{ validator: checkCode, trigger: 'blur' }],
       },
-    };
+    }
   },
   methods: {
     sendRegisterCode() {
@@ -133,64 +133,64 @@ export default {
         .sendRegisterCode(this.user.userId)
         .then((res) => {
           if (res.data.code == 1) {
-            this.time = 60;
+            this.time = 60
             this.interval = setInterval(() => {
-              this.sendCodeText = "发送注册码" + "(" + this.time + "s)";
-              this.time = this.time - 1;
-            }, 1000);
-            console.log(res.data);
-            this.$message.success("发送成功!");
+              this.sendCodeText = '发送注册码' + '(' + this.time + 's)'
+              this.time = this.time - 1
+            }, 1000)
+            console.log(res.data)
+            this.$message.success('发送成功!')
           } else {
-            this.$message.error(res.data.message);
+            this.$message.error(res.data.message)
           }
         })
         .catch((err) => {
-          this.$message.error(err.message);
+          this.$message.error(err.message)
         })
         .finally(() => {
-          loading.close();
-        });
+          loading.close()
+        })
     },
     register(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const loading = this.$loading(loadingWindow())
-          this.user.userName = this.user.userId;
+          this.user.userName = this.user.userId
           api
             .register(this.code, this.user)
             .then((res) => {
-              this.$router.go(0);
+              this.$router.go(0)
               if (res.data.code == 1) {
-                this.$message.success("注册成功!");
+                this.$message.success('注册成功!')
               } else {
-                this.$message.error(res.data.message);
+                this.$message.error(res.data.message)
               }
             })
             .catch((err) => {
-              this.$message.error(error.message);
+              this.$message.error(error.message)
             })
             .finally(() => {
-              loading.close();
-            });
+              loading.close()
+            })
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
   },
   watch: {
     time(newValue, oldValue) {
       if (newValue == 60) {
-        this.buttonDisabled = true;
+        this.buttonDisabled = true
       }
       if (newValue == -1) {
-        clearInterval(this.interval);
-        this.buttonDisabled = false;
-        this.sendCodeText = "发送注册码";
+        clearInterval(this.interval)
+        this.buttonDisabled = false
+        this.sendCodeText = '发送注册码'
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -207,9 +207,8 @@ export default {
   width: 50%;
   border-right: 0px;
 }
-
 .el-form-item {
-  margin-top: 5px;
+  margin-top: 20px;
   margin-bottom: 0px;
   position: relative;
   left: 50%;
@@ -217,7 +216,6 @@ export default {
   transform: translate(-50%);
   height: auto;
 }
-
 .registerButton {
   margin-top: 15px;
   width: 40%;
@@ -225,8 +223,8 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-
 .el-form {
+  padding-top: 5px;
   position: relative;
   left: 50%;
   top: 30%;

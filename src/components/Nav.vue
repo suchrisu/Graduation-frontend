@@ -14,13 +14,13 @@
       </ul>
     </div>
     <div class="own-pic">
-        <HeadPortrait :imgUrl="imgUrl"></HeadPortrait>
+      <HeadPortrait :imgUrl="imgUrl"></HeadPortrait>
     </div>
   </div>
 </template>
 
 <script>
-import HeadPortrait from "./HeadPortrait.vue";
+import HeadPortrait from './HeadPortrait.vue'
 
 export default {
   components: {
@@ -29,46 +29,49 @@ export default {
   data() {
     return {
       menuList: [
-        "icon-xinxi",
+        'icon-xinxi',
         // "icon-shipin",
-        "icon-shu",
-        "icon-shandian",
-        "icon-shezhi",
+        'icon-shu',
+        'icon-shandian',
+        'icon-shezhi',
       ],
       current: 0,
-      imgUrl: require('@/assets/img/userHeader.jpg')
-    };
+      imgUrl: require('@/assets/img/userHeader.jpg'),
+    }
   },
   methods: {
     changeMenu(index) {
       switch (index) {
         case 0:
-          this.$router.push({
-            name: "ChatHome",
-          }, () => {});
-          break;
+          this.$router.push(
+            {
+              name: 'ChatHome',
+            },
+            () => {}
+          )
+          break
         case 1:
-          this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
-          break;
+          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+          break
         case 2:
-          this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
-          break;
+          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+          break
         case 3:
-          this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
-          break;
+          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+          break
         case 4:
-          this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
-          break;
+          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+          break
         default:
           this.$router.push({
-            name: "ChatHome",
-          });
+            name: 'ChatHome',
+          })
       }
 
-      this.current = index;
+      this.current = index
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
