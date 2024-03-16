@@ -38,6 +38,7 @@ import HeadPortrait from './HeadPortrait.vue'
 import { mapMutations } from 'vuex'
 import api from '@/api/index'
 import { loadingWindow } from '@/util/util'
+import {ElMessage} from 'element-plus'
 export default {
   components: {
     HeadPortrait,
@@ -80,14 +81,10 @@ export default {
       api
         .removeSession(sessionId)
         .then((res) => {
-          if (res.data.code == 1) {
             this.removeSessionFromList(sessionId)
-          } else {
-            this.$message.error(res.data.message)
-          }
         })
-        .catch((err) => {
-          this.$message.error(err.message)
+        .catch((err)=>{ 
+          ElMessage.error(err.message)
         })
         .finally(() => {
           loading.close()
@@ -98,16 +95,10 @@ export default {
       api
         .setSessionName(session)
         .then((res) => {
-          if (res.data.code == 1) {
             this.isReadonly = true
-          } else {
-            this.session.sessionName = this.oldName
-            this.$message.error(res.data.message)
-          }
         })
-        .catch((err) => {
-          this.session.sessionName = this.oldName
-          this.$message.error(err.message)
+        .catch((err)=>{ 
+          ElMessage.error(err.message)
         })
         .finally(() => {
           loading.close()

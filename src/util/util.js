@@ -1,4 +1,5 @@
 import { ElLoading } from "element-plus"
+import { md5 } from "js-md5"
 
 //防抖
 export function debounce(fn) {
@@ -119,7 +120,9 @@ export function getTime() {
 
 export function sessionStorageSet(key, value) {
   if (typeof value === 'object') {
-    value = JSON.stringify(value)
+    var valueTemp = deepClone(value)
+    sessionStorage.setItem(key, JSON.stringify(valueTemp))
+    return;
   }
   sessionStorage.setItem(key, value)
 }
@@ -179,3 +182,26 @@ export function getDate() {
   date = date.length == 1 ? '0' + date : date
   return year + '-' + month + '-' + date
 }
+
+export function toMd5(input){
+  return md5(input+"sususu");
+}
+
+//使用递归的方式实现数组、对象的深拷贝
+export function deepClone (obj) {
+  let objClone = Array.isArray(obj) ? [] : {};
+  if (obj && typeof obj === "object") {
+      for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+              //判断ojb子元素是否为对象，如果是，递归复制
+              if (obj[key] && typeof obj[key] === "object") {
+                  objClone[key] = deepClone(obj[key]);
+              } else {
+                  //如果不是，简单复制
+                  objClone[key] = obj[key];
+              }
+          }
+      }
+  }
+  return objClone;
+};   

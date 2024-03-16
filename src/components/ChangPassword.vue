@@ -1,29 +1,31 @@
 <template>
-  <div>
-    <el-form
+    <el-drawer
+    v-model="drawer"
+    title="修改密码"
+    direction="ltr"
+    size="27%"
+    :before-close="handleClose"
+    destroy-on-close="true"
+    @close="close"
+  > 
+  <el-form
       :label-position="labelPostion"
       ref="form"
       :model="user"
       status-icon
       :rules="rules"
       size="large"
+      
     >
-      <el-form-item label="邮箱" prop="userId">
-        <el-input
-          v-model="user.userId"
-          placeholder="请输入正确的邮箱"
-          class="userIdInput"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="userPassword">
+      <el-form-item label="新密码" prop="userPassword">
         <el-input
           v-model="user.userPassword"
           show-password
-          placeholder="请输入密码"
+          placeholder="请输入新密码"
           class="userPasswordInput"
         ></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" prop="userCheckPassword">
+      <el-form-item label="确认新密码" prop="userCheckPassword">
         <el-input
           v-model="userCheckPassword"
           show-password
@@ -38,7 +40,7 @@
           type="primary"
           plain
           class="sendCodeButton"
-          @click="sendRegisterCode"
+          @click="sendValidCode"
           :disabled="buttonDisabled"
           >{{ sendCodeText }}</el-button
         >
@@ -49,35 +51,23 @@
           round
           plain
           class="registerButton"
-          @click="register('form')"
-          >注册</el-button
+          @click="updateUserPassword('form')"
+          >修改</el-button
         >
       </el-form-item>
     </el-form>
-  </div>
+  
+   
+  </el-drawer>
 </template>
 
 <script>
-import { ElMessage } from 'element-plus'
-import api from '../../api/index'
-import { loadingWindow, toMd5 } from '@/util/util'
-export default {
-  name: 'RegisterForm',
-
-  data() {
-    var checkEmail = (rule, value, cb) => {
-      if (value == '') {
-        return cb(new Error('请输入邮箱!'))
-      }
-      //验证邮箱的正则表达式
-      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-      if (regEmail.test(value)) {
-        //合法的邮箱
-        return cb()
-      }
-      cb(new Error('请输入合法的邮箱!'))
-    }
-
+import {loadingWindow,sessionStorageGet,sessionStorageClearAll,sessionStorageSet, toMd5} from "@/util/util"
+import api from "@/api/index"
+import {ElMessage} from 'element-plus'
+export default{
+    name:"ChangePassword",
+    data() {
     var checkPassword = (rule, value, cb) => {
       if (value == '') {
         return cb(new Error('请输入密码!'))
@@ -106,13 +96,11 @@ export default {
       cb(new Error('请输入验证码!'))
     }
     return {
+      drawer: false,
       labelPostion: 'top',
-      user: {
-        userId: '',
-        userPassword: '',
-        rolePowerId: '2',
-        userName: '',
-        userHeadPictureAddress: require("@/assets/img/initHeader.png")
+      currentUser:"",
+      user:{
+        userPassword: ""
       },
       code: '',
       userCheckPassword: '',
@@ -121,25 +109,37 @@ export default {
       time: '',
       sendCodeText: '发送验证码',
       rules: {
-        userId: [{ validator: checkEmail, trigger: 'blur' }],
         userPassword: [{ validator: checkPassword, trigger: 'blur' }],
         userCheckPassword: [{ validator: checkCheckPassword, trigger: 'blur' }],
         code: [{ validator: checkCode, trigger: 'blur' }],
       },
     }
   },
+  watch:{
+    drawerProps(){
+      this.drawer = this.drawerProps;
+    }
+  },
+  mounted(){
+    this.currentUser = sessionStorageGet("currentUser")
+    this.drawer = true;
+  },
   methods: {
-    sendRegisterCode() {
+    close(){
+      this.$emit("close")
+    },
+    sendValidCode() {
       const loading = loadingWindow();
       api
-        .sendRegisterCode(this.user.userId)
+        .sendValidCode(this.currentUser.userId)
         .then((res) => {
             this.time = 60
             this.interval = setInterval(() => {
               this.sendCodeText = '发送验证码' + '(' + this.time + 's)'
               this.time = this.time - 1
             }, 1000)
-            this.$message.success('验证码已发送到'+this.user.userId+"!")
+            console.log(res.data)
+            this.$message.success('验证码已发送到'+this.currentUser.userId+"!")
         })
         .catch((err)=>{ 
           ElMessage.error(err.message)
@@ -148,17 +148,20 @@ export default {
           loading.close()
         })
     },
-    register(formName) {
+    updateUserPassword(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const loading = loadingWindow();
-          this.user.userName = this.user.userId
-          this.user.userPassword = toMd5(this.user.userPassword);
-          api
-            .register(this.code, this.user)
+          this.currentUser.userPassword = toMd5(this.user.userPassword);
+           api
+            .updateUserPassword(this.code,this.currentUser)
             .then((res) => {
-                this.$message.success('注册成功!')
-                this.$router.go(0)
+                this.$message.success('修改成功!')
+                sessionStorageClearAll()
+                this.$router.push({
+                  path:"/"
+                })
+                this.$message.warning("你已修改密码,请重新登录!")
             })
             .catch((err)=>{ 
               ElMessage.error(err.message)
@@ -187,41 +190,41 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .sendCodeButton {
-  width: 50%;
-  height: 39px;
-  border: 0;
-  margin-top: 1px;
-  float: right;
-  border-radius: 4px;
-  border-left: 0px;
-}
-.codeInput {
-  width: 50%;
-  border-right: 0px;
-}
-.el-form-item {
-  margin-top: 20px;
-  margin-bottom: 0px;
-  position: relative;
-  left: 50%;
-  width: 90%;
-  transform: translate(-50%);
-  height: auto;
-}
-.registerButton {
-  margin-top: 15px;
-  width: 40%;
-  position: relative;
-  left: 50%;
-  transform: translate(-50%);
-}
-.el-form {
-  padding-top: 5px;
-  position: relative;
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, -30%);
-}
+    width: 50%;
+    height: 39px;
+    border: 0;
+    margin-top: 1px;
+    float: right;
+    border-radius: 4px;
+    border-left: 0px;
+  }
+  .codeInput {
+    width: 50%;
+    border-right: 0px;
+  }
+  .el-form-item {
+    margin-top: 20px;
+    margin-bottom: 0px;
+    position: relative;
+    left: 50%;
+    width: 90%;
+    transform: translate(-50%);
+    height: auto;
+  }
+  .registerButton {
+    margin-top: 15px;
+    width: 40%;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .el-form {
+    padding-top: 5px;
+    position: relative;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -30%);
+  }
 </style>

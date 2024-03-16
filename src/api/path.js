@@ -1,9 +1,9 @@
 export default {
   baseUrl: 'http://localhost',
-  login: '/user/login',
-  loginCode: '/user/loginCode',
-  register: '/user/register',
-  sendRegisterCode: '/user/sendRegisterCode',
+  login: '/login/login',
+  loginCode: '/login/loginCode',
+  register: '/register/register',
+  sendRegisterCode: '/register/sendRegisterCode',
 
   addSession: '/session/addSession',
   removeSession: '/session/removeSession',
@@ -15,5 +15,7 @@ export default {
   getChatMessageList: '/chat/getChatMessageList',
 
   updateUser: 'user/updateUser',
-  logOut: 'user/logOut'
+  updateUserPassword: 'user/updateUserPassword',
+  sendvalidCode: 'user/sendValidCode',
+  logOut: 'login/logOut'
 }

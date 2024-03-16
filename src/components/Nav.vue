@@ -17,17 +17,18 @@
     placement="top"
     :width="260"
     trigger="hover"
+    :disabled="drawer"
     class="popover"
   >
   <template #reference>
     <div class="own-pic">
-      <HeadPortrait :imgUrl="imgUrl" @click="showDrawer"></HeadPortrait>
+      <HeadPortrait :imgUrl="currentUser.userHeadPictureAddress" @click="showDrawer"></HeadPortrait>
     </div>
   </template>
   <template #default>
   <el-card class="card">
     <div class="cardItem">
-      <HeadPortrait :imgUrl="imgUrl" @click="showDrawer" class="head"></HeadPortrait>
+      <HeadPortrait :imgUrl="currentUser.userHeadPictureAddress" @click="showDrawer" class="head"></HeadPortrait>
     </div>
     <div class="cardItem">
       <input
@@ -41,36 +42,30 @@
     onmouseout="this.style.color='white'" @click="editUserName"><Edit/></el-icon></div>
     
     <div class="cardItem">
-      <el-button plain type="primary">修改密码</el-button>
+      <el-button plain type="primary" @click="updateUserPassword">修改密码</el-button>
       <el-button plain type="danger" @click="logOut">退出登录</el-button>
     </div>
   </el-card>
 </template>
 </el-popover>
+ 
+<ChangePassword v-if="drawer"  @close="quitUpdateUserPassword"/>
+
 
   </div>
-  <div>
-    <!-- <el-drawer
-    v-model="drawer"
-    title="个人中心"
-    direction="ltr"
-    size="27%"
-    :before-close="handleClose"
-  > -->
   
-  
-   
-  <!-- </el-drawer> -->
-  </div>
 </template>
 
 <script>
 import HeadPortrait from './HeadPortrait.vue'
 import {sessionStorageGet,sessionStorageClearAll,sessionStorageSet, loadingWindow} from "@/util/util"
+import ChangePassword from '@/components/ChangPassword.vue'
 import api from "@/api/index"
+import {ElMessage} from 'element-plus'
 export default {
   components: {
     HeadPortrait,
+    ChangePassword
   },
   data() {
     return {
@@ -82,11 +77,10 @@ export default {
         'icon-shezhi',
       ],
       current: 0,
-      imgUrl: require('@/assets/img/userHeader.jpg'),
-      drawer: true,
       currentUser:"",
       isReadonly: true,
-      oldName: ""
+      oldName: "",
+      drawer: false,
     }
   },
   mounted(){
@@ -94,22 +88,24 @@ export default {
     this.oldName = this.currentUser.userName
   },
   methods: {
+    quitUpdateUserPassword(){
+      console.log("blur")
+      this.drawer = false;
+    },
+    updateUserPassword(){
+      this.drawer = true;
+    },
     logOut(){
       const loading = loadingWindow();
       api.logOut().then(
         res=>{
-          if(res.data.code==1){
             sessionStorageClearAll();
             this.$message.success("已退出!")
             this.$router.push("/")
-          }
-          else{
-            this.$message.error(res.data.message)
-          }
         }
-      ).catch(err=>{
-        this.$message.error(err.message)
-      }).finally(()=>{
+      ).catch((err)=>{ 
+        ElMessage.error(err.message)
+        }).finally(()=>{
         loading.close()
       })
     },
@@ -117,19 +113,12 @@ export default {
       const loading = loadingWindow()
       api.updateUser(this.currentUser).then(
         res=>{
-          if(res.data.code==1){
             sessionStorageSet('currentUser',this.currentUser)
             this.$message.success("修改成功!")
-          }
-          else{
-            this.$message.error(res.data.message)
-            this.currentUser.userName = this.oldName
-          }
-          
         }
-      ).catch(err=>{
-        this.$message.error(err.message)
-      }).finally(()=>{
+      ).catch((err)=>{ 
+        ElMessage.error(err.message)
+        }).finally(()=>{
         loading.close()
       })
     },

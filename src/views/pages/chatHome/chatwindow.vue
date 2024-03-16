@@ -132,7 +132,7 @@
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { animation } from '@/util/util'
 import { getChatMsg } from '@/api/getData'
-
+import {ElMessage} from 'element-plus'
 import HeadPortrait from '@/components/HeadPortrait'
 import Emoji from '@/components/Emoji'
 import FileCard from '@/components/FileCard.vue'
@@ -198,16 +198,12 @@ export default {
       api
         .chatWithLLM(this.session.sessionFile, msg)
         .then((res) => {
-          if (res.data.code == 1) {
             this.chatMsgList = res.data.data
             this.scrollBottom()
             console.log('list', this.chatMsgList)
-          } else {
-            this.$message.error(res.data.message)
-          }
         })
-        .catch((err) => {
-          this.$message.error(err.message)
+        .catch((err)=>{ 
+          ElMessage.error(err.message)
         })
     },
     //获取窗口高度并滚动至最底层
@@ -216,15 +212,11 @@ export default {
       api
         .getChatMessageList(this.session.sessionFile)
         .then((res) => {
-          if (res.data.code == 1) {
             this.chatMsgList = res.data.data
             this.scrollBottom()
-          } else {
-            this.$message.error(res.data.message)
-          }
         })
-        .catch((err) => {
-          this.$message.error(err.message)
+        .catch((err)=>{ 
+          ElMessage.error(err.message)
         })
     },
     scrollBottom() {

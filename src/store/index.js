@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 export default createStore({
   state: {
-    sessionList: [],
+    sessionList: []
   },
   getters: {},
   mutations: {
@@ -19,7 +19,7 @@ export default createStore({
       console.log(index)
 
       state.sessionList.splice(index, 1)
-    },
+    }
   },
   actions: {},
   modules: {},

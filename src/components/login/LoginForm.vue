@@ -49,7 +49,10 @@ import {
   sessionStorageGet,
   sessionStorageSet,
   loadingWindow,
+  toMd5,
+  deepClone
 } from '@/util/util'
+import {ElMessage} from 'element-plus'
 export default {
   name: 'LoginForm',
 
@@ -80,7 +83,7 @@ export default {
       cb(new Error('请输入验证码!'))
     }
     return {
-      codeurl: 'http://localhost/user/loginCode',
+      codeurl: 'http://localhost/login/loginCode',
       labelPostion: 'top',
       user: {
         userId: '',
@@ -99,28 +102,27 @@ export default {
   methods: {
     getCode() {
       this.codeurl =
-        'http://localhost/user/loginCode' + '?random=' + Math.random()
+        'http://localhost/login/loginCode' + '?random=' + Math.random()
     },
     login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const loading = loadingWindow();
+          let loginUser = deepClone(this.user);
+          loginUser.userPassword = toMd5(this.user.userPassword)
           api
-            .login(this.code, this.user)
+            .login(this.code, loginUser)
             .then((res) => {
-              if (res.data.code == 1) {
                 sessionStorageSet('currentUser', res.data.data)
+                sessionStorageSet('token',res.data.message);
                 this.$router.push({
                   path: '/chat',
                 })
-                this.$message.success('欢迎' + res.data.data.userName + '!')
-              } else {
-                this.$message.error(res.data.message)
-              }
+                this.$message.success('欢迎' + res.data.data.userName + '!') 
             })
-            .catch((err) => {
-              this.$message.error(err.message)
-            })
+            .catch((err)=>{ 
+              ElMessage.error(err.message)
+        })
             .finally(() => {
               loading.close()
             })

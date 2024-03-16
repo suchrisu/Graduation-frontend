@@ -39,9 +39,18 @@ export default {
     return axios.get(path.getChatMessageList + '?sessionFile=' + sessionFile)
   },
 
+
+
   updateUser(user){
     return axios.post(path.updateUser,user);
   },
+  sendValidCode(mail){
+    return axios.get(path.sendvalidCode+"?mail="+mail);
+  },
+  updateUserPassword(code,user){
+    return axios.post(path.updateUserPassword+"?code="+code,user);
+  },
+
   logOut(){
     return axios.get(path.logOut);
   }

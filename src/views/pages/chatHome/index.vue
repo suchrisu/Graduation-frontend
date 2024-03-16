@@ -49,6 +49,7 @@ import { sessionStorageGet, getTime, loadingWindow, getDate } from '@/util/util'
 import { mapState, mapMutations } from 'vuex'
 import { nanoid } from 'nanoid'
 import api from '@/api/index'
+import {ElMessage} from 'element-plus'
 export default {
   data() {
     return {
@@ -69,15 +70,11 @@ export default {
     api
       .getSessions()
       .then((res) => {
-        if (res.data.code == 1) {
           this.setSessionList(res.data.data)
-        } else {
-          this.$message.error(res.data.message)
-        }
       })
-      .catch((err) => {
-        this.$message.error(err.message)
-      })
+      .catch((err)=>{ 
+        ElMessage.error(err.message)
+        })
       .finally(() => {
         loading.close()
       })
@@ -107,16 +104,12 @@ export default {
       api
         .addSession(newSession)
         .then((res) => {
-          if (res.data.code == 1) {
             let sessionListTemp = this.sessionList
             sessionListTemp.unshift(newSession)
             this.setSessionList(sessionListTemp)
-          } else {
-            this.$message.error(res.data.message)
-          }
         })
-        .catch((err) => {
-          this.$message.error(err.message)
+        .catch((err)=>{ 
+          ElMessage.error(err.message)
         })
         .finally(() => {
           loading.close()
