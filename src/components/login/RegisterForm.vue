@@ -60,7 +60,7 @@
 <script>
 import { ElMessage } from 'element-plus'
 import api from '../../api/index'
-import { loadingWindow, toMd5 } from '@/util/util'
+import { deepClone, loadingWindow, toMd5 } from '@/util/util'
 export default {
   name: 'RegisterForm',
 
@@ -112,7 +112,7 @@ export default {
         userPassword: '',
         rolePowerId: '2',
         userName: '',
-        userHeadPictureAddress: require("@/assets/img/initHeader.png")
+        userHeader: "defaultHeader.png"
       },
       code: '',
       userCheckPassword: '',
@@ -153,9 +153,10 @@ export default {
         if (valid) {
           const loading = loadingWindow();
           this.user.userName = this.user.userId
-          this.user.userPassword = toMd5(this.user.userPassword);
+          var loginUser = deepClone(this.user)
+          loginUser.userPassword = toMd5(this.user.userPassword);
           api
-            .register(this.code, this.user)
+            .register(this.code, loginUser)
             .then((res) => {
                 this.$message.success('注册成功!')
                 this.$router.go(0)

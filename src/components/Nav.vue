@@ -22,20 +22,32 @@
   >
   <template #reference>
     <div class="own-pic">
-      <HeadPortrait :imgUrl="currentUser.userHeadPictureAddress" @click="showDrawer"></HeadPortrait>
+      <!-- D:/Graduation Thesis/dark/policy-llm/src/assets/img/initHeader.png -->
+      <HeadPortrait :imgUrl="userHeader"></HeadPortrait>
     </div>
   </template>
   <template #default>
   <el-card class="card">
     <div class="cardItem">
-      <HeadPortrait :imgUrl="currentUser.userHeadPictureAddress" @click="showDrawer" class="head"></HeadPortrait>
+      <el-upload
+    class="avatar-uploader"
+    :with-credentials="true"
+    :action="uploadUrl"
+    :headers="headers"
+    :show-file-list="false"
+    :on-success="handleUploadHeaderSuccess"
+    :before-upload="beforeUploadHeader"
+  >
+  <HeadPortrait :imgUrl="userHeader"  class="head"></HeadPortrait>
+  </el-upload>
+
     </div>
     <div class="cardItem">
       <input
       type="text"
       class="inputName"
       :readonly="isReadonly"
-      v-model="currentUser.userName"
+      v-model="user.userName"
       @blur="quitEdit"
       ref="popoverUserName"
     /> <el-icon class="edit" onmouseover="this.style.color='blue'"
@@ -58,10 +70,11 @@
 
 <script>
 import HeadPortrait from './HeadPortrait.vue'
-import {sessionStorageGet,sessionStorageClearAll,sessionStorageSet, loadingWindow} from "@/util/util"
+import {sessionStorageGet,sessionStorageClearAll,sessionStorageSet, loadingWindow, deepClone} from "@/util/util"
 import ChangePassword from '@/components/ChangPassword.vue'
 import api from "@/api/index"
 import {ElMessage} from 'element-plus'
+import {mapState,mapMutations} from 'vuex'
 export default {
   components: {
     HeadPortrait,
@@ -77,17 +90,49 @@ export default {
         'icon-shezhi',
       ],
       current: 0,
-      currentUser:"",
+      user:{},
       isReadonly: true,
       oldName: "",
       drawer: false,
+      uploadUrl: "",
+      headers: {},
     }
   },
   mounted(){
-    this.currentUser = sessionStorageGet("currentUser")
-    this.oldName = this.currentUser.userName
+    this.user = deepClone(this.currentUser);
+    this.oldName = this.user.userName
+    this.uploadUrl = api.uploadHeader();
+    this.headers = {
+      token: sessionStorageGet("token")
+    }
+  },
+  computed:{
+    ...mapState(["userHeader","currentUser"])
   },
   methods: {
+    ...mapMutations(["setUserHeader","setCurrentUser"]),
+    beforeUploadHeader(file){
+      const isJPG = file.type === 'image/jpeg';
+      const isPNG = file.type === 'image/png';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!(isJPG || isPNG)) {
+          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return (isJPG || isPNG) && isLt2M;
+    },
+    handleUploadHeaderSuccess(res,file){
+      if(res.code==1){
+        this.currentUser.userHeader = res.data.data;
+        this.userHeader = URL.createObjectURL(file.raw);
+        ElMessage.success("修改成功!");
+      }
+      else{
+        ElMessage.error(res.message);
+      }
+    },
     quitUpdateUserPassword(){
       console.log("blur")
       this.drawer = false;
@@ -111,13 +156,15 @@ export default {
     },
     quitEdit(){
       const loading = loadingWindow()
-      api.updateUser(this.currentUser).then(
+      api.updateUser(this.user).then(
         res=>{
-            sessionStorageSet('currentUser',this.currentUser)
+            this.setCurrentUser(this.user)
+            this.oldName = this.user.userName;
             this.$message.success("修改成功!")
         }
       ).catch((err)=>{ 
         ElMessage.error(err.message)
+        this.user.userName = this.oldName;
         }).finally(()=>{
         loading.close()
       })
@@ -127,9 +174,6 @@ export default {
       this.isReadonly = false
       this.$refs.popoverUserName.focus()
     },
-    // showDrawer(){
-    //   this.drawer = true;
-    // },
     changeMenu(index) {
       switch (index) {
         case 0:

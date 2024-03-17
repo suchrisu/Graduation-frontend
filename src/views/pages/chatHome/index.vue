@@ -65,8 +65,9 @@ export default {
     ChatWindow
   },
   mounted() {
-    console.log(sessionStorageGet('currentUser'))
     const loading = loadingWindow()
+    var url = api.getHeader(this.currentUser.userHeader);
+    this.setUserHeader(url);
     api
       .getSessions()
       .then((res) => {
@@ -80,7 +81,7 @@ export default {
       })
   },
   computed: {
-    ...mapState(['sessionList']),
+    ...mapState(['sessionList',"currentUser"]),
   },
   watch: {
     sessionList() {
@@ -90,12 +91,11 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setSessionList']),
+    ...mapMutations(['setSessionList',"setUserHeader"]),
     addSession() {
-      let currentUser = sessionStorageGet('currentUser')
       let newSession = {
-        sessionId: currentUser.userId + '_' + getTime(),
-        sessionOwner: currentUser.userId,
+        sessionId: this.currentUser.userId + '_' + getTime(),
+        sessionOwner: this.currentUser.userId,
         sessionName: '新会话',
         sessionFile: nanoid() + '.json',
         sessionLastTime: getTime(),

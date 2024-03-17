@@ -17,14 +17,17 @@ instance.interceptors.request.use(config=>{
 })
 
 instance.interceptors.response.use(res=>{
-    
-           
-    if(res.data.code==1){
-        return res;
+    if(res.headers['content-type']=="application/json"){
+        console.log(111)
+        if(res.data.code==1){
+            return res;
+        }
+        
+        // ElMessage.error(res.data.message)
+        return Promise.reject(new Error(res.data.message))
     }
+    return res;
     
-    // ElMessage.error(res.data.message)
-    return Promise.reject(new Error(res.data.message))
 }
 ,
 err=>{

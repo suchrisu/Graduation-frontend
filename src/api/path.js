@@ -7,15 +7,17 @@ export default {
 
   addSession: '/session/addSession',
   removeSession: '/session/removeSession',
-  setSessionName: 'session/setSessionName',
-  setSessionTime: 'session/setSessionTime',
-  getSessions: 'session/getSessions',
+  setSessionName: '/session/setSessionName',
+  setSessionTime: '/session/setSessionTime',
+  getSessions: '/session/getSessions',
 
-  chatWithLLM: 'chat/chatWithLLM',
+  chatWithLLM: '/chat/chatWithLLM',
   getChatMessageList: '/chat/getChatMessageList',
 
-  updateUser: 'user/updateUser',
-  updateUserPassword: 'user/updateUserPassword',
-  sendvalidCode: 'user/sendValidCode',
-  logOut: 'login/logOut'
+  updateUser: '/user/updateUser',
+  updateUserPassword: '/user/updateUserPassword',
+  sendvalidCode: '/user/sendValidCode',
+  getHeader: '/userFile/getHeader',
+  uploadHeader: '/userFile/uploadHeader',
+  logOut: '/login/logOut'
 }

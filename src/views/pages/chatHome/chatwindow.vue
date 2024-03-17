@@ -76,7 +76,7 @@
           <div class="chat-me" v-else>
             <div class="info-time">
               <span>{{ item.role }}</span>
-              <img :src="userImg" alt="" />
+              <img :src="userHeader" alt="" />
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
               {{ item.content }}
@@ -130,13 +130,13 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { animation } from '@/util/util'
-import { getChatMsg } from '@/api/getData'
+import { animation,sessionStorageGet } from '@/util/util'
 import {ElMessage} from 'element-plus'
 import HeadPortrait from '@/components/HeadPortrait'
 import Emoji from '@/components/Emoji'
 import FileCard from '@/components/FileCard.vue'
 import api from '@/api/index'
+import { mapState } from 'vuex'
 export default {
   components: {
     HeadPortrait,
@@ -162,13 +162,15 @@ export default {
       showEmoji: false,
       srcImgList: [],
       sessionImg: require('@/assets/img/session1.png'),
-      assistantHeadImg: require('@/assets/img/assistant.png'),
-      userImg: require('@/assets/img/userHeader.jpg'),
+      assistantHeadImg: require('@/assets/img/assistant.png')
     }
   },
   mounted() {
     // this.getFriendChatMsg();
     this.getSessionMsg()
+  },
+  computed:{
+    ...mapState(["userHeader"])
   },
   methods: {
     // //获取聊天记录

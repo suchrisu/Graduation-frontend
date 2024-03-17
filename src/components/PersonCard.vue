@@ -96,9 +96,11 @@ export default {
         .setSessionName(session)
         .then((res) => {
             this.isReadonly = true
+            this.oldName = session.sessionName;
         })
         .catch((err)=>{ 
           ElMessage.error(err.message)
+          this.session.sessionName = this.oldName;
         })
         .finally(() => {
           loading.close()

@@ -4,7 +4,7 @@
       <el-col :span="12"><div class="left"></div></el-col>
       <el-col :span="12"
         ><div class="right">
-          <el-tabs type="border-card" stretch="true">
+          <el-tabs type="border-card" :stretch="true">
             <el-tab-pane label="用户登录">
               <LoginForm class="Form"></LoginForm>
             </el-tab-pane>

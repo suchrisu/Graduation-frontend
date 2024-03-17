@@ -65,6 +65,7 @@
 import {loadingWindow,sessionStorageGet,sessionStorageClearAll,sessionStorageSet, toMd5} from "@/util/util"
 import api from "@/api/index"
 import {ElMessage} from 'element-plus'
+import { mapState } from 'vuex'
 export default{
     name:"ChangePassword",
     data() {
@@ -98,7 +99,6 @@ export default{
     return {
       drawer: false,
       labelPostion: 'top',
-      currentUser:"",
       user:{
         userPassword: ""
       },
@@ -121,8 +121,10 @@ export default{
     }
   },
   mounted(){
-    this.currentUser = sessionStorageGet("currentUser")
     this.drawer = true;
+  },
+  computed:{
+    ...mapState(["currentUser"])
   },
   methods: {
     close(){
@@ -152,9 +154,10 @@ export default{
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const loading = loadingWindow();
-          this.currentUser.userPassword = toMd5(this.user.userPassword);
+          let temp  = deepclone(this.currentUser);
+          temp.userPassword = toMd5(this.user.userPassword)
            api
-            .updateUserPassword(this.code,this.currentUser)
+            .updateUserPassword(this.code,temp)
             .then((res) => {
                 this.$message.success('修改成功!')
                 sessionStorageClearAll()

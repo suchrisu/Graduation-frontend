@@ -53,6 +53,7 @@ import {
   deepClone
 } from '@/util/util'
 import {ElMessage} from 'element-plus'
+import {mapMutations, mapState} from 'vuex'
 export default {
   name: 'LoginForm',
 
@@ -100,6 +101,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["setCurrentUser","setUserHeader"]),
     getCode() {
       this.codeurl =
         'http://localhost/login/loginCode' + '?random=' + Math.random()
@@ -113,7 +115,8 @@ export default {
           api
             .login(this.code, loginUser)
             .then((res) => {
-                sessionStorageSet('currentUser', res.data.data)
+              let currentUser = res.data.data;
+                this.setCurrentUser(currentUser);
                 sessionStorageSet('token',res.data.message);
                 this.$router.push({
                   path: '/chat',

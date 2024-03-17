@@ -1,5 +1,6 @@
 import axios from '../util/requests'
 import path from './path'
+import {ElMessage} from 'element-plus'
 export default {
   getBaseUrl() {
     return axios.get(path.baseUrl)
@@ -50,6 +51,26 @@ export default {
   updateUserPassword(code,user){
     return axios.post(path.updateUserPassword+"?code="+code,user);
   },
+
+  getHeader(userHeader){
+     axios.request({
+      url: path.getHeader+"?userHeader="+userHeader,
+      methods: "get",
+      responseType: 'blob'
+     }).then(res=>{
+        var url = window.URL.createObjectURL(res.data);
+        return url;
+     }).catch(err=>{
+      ElMessage.error(err.message);
+      return "";
+     })
+     
+  },
+
+  uploadHeader(){
+    return path.baseUrl+"/"+path.uploadHeader;
+  },
+
 
   logOut(){
     return axios.get(path.logOut);
