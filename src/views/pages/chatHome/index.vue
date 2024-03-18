@@ -66,8 +66,6 @@ export default {
   },
   mounted() {
     const loading = loadingWindow()
-    var url = api.getHeader(this.currentUser.userHeader);
-    this.setUserHeader(url);
     api
       .getSessions()
       .then((res) => {
@@ -84,14 +82,25 @@ export default {
     ...mapState(['sessionList',"currentUser"]),
   },
   watch: {
-    sessionList() {
-      if (this.sessionList.length == 0) {
-        this.showChatWindow = false
+    'sessionList.length': {
+      handler(newValue,oldValue){
+      if (newValue == 0) {
+        this.showChatWindow = false;
+        return;
       }
-    },
-  },
+
+      if(newValue != oldValue){
+        this.chatWindowInfo = this.sessionList[0];
+        this.sessionCurrent = this.sessionList[0].sessionId;
+      }
+      
+    }
+
+      }
+    }  
+    ,
   methods: {
-    ...mapMutations(['setSessionList',"setUserHeader"]),
+    ...mapMutations(['setSessionList']),
     addSession() {
       let newSession = {
         sessionId: this.currentUser.userId + '_' + getTime(),

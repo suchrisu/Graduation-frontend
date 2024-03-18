@@ -36,7 +36,7 @@ export default {
 .background {
   width: 100%;
   height: 100vh;
-  background-image: url(../../assets/bg1.jpg);
+  background-image: url(../../assets/img/bgdark.jpg);
   background-size: cover;
   background-repeat: no-repeat;
 }

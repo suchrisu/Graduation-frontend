@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import {loadingWindow,sessionStorageGet,sessionStorageClearAll,sessionStorageSet, toMd5} from "@/util/util"
+import {loadingWindow,sessionStorageGet,sessionStorageClearAll,sessionStorageSet, toMd5,deepClone} from "@/util/util"
 import api from "@/api/index"
 import {ElMessage} from 'element-plus'
 import { mapState } from 'vuex'
@@ -154,7 +154,7 @@ export default{
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const loading = loadingWindow();
-          let temp  = deepclone(this.currentUser);
+          let temp  = deepClone(this.currentUser);
           temp.userPassword = toMd5(this.user.userPassword)
            api
             .updateUserPassword(this.code,temp)

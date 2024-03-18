@@ -53,18 +53,23 @@ export default {
   },
 
   getHeader(userHeader){
-     axios.request({
-      url: path.getHeader+"?userHeader="+userHeader,
-      methods: "get",
-      responseType: 'blob'
-     }).then(res=>{
-        var url = window.URL.createObjectURL(res.data);
-        return url;
-     }).catch(err=>{
-      ElMessage.error(err.message);
-      return "";
-     })
-     
+    //  return axios.request({
+    //   url: path.getHeader+"?userHeader="+userHeader,
+    //   methods: "get",
+    //   responseType: 'blob'
+    //  }).then(res=>{
+    //   const headers = res;
+    //   console.log(headers)
+    //   const blob = new Blob([res],{type: headers['content-type']})
+    //   console.log(blob)
+    //   const url = URL.createObjectURL(blob);
+    //   console.log(url);
+    //   return url;
+    //  }).catch(err=>{
+    //   ElMessage.error(err.message)
+    //  })
+     const url = path.baseUrl+path.getHeader+"?userHeader="+userHeader;
+     return url;
   },
 
   uploadHeader(){

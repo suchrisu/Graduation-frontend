@@ -151,7 +151,7 @@ export default {
   },
   watch: {
     session() {
-      console.log('watchsession')
+      // console.log('watchsession')
       this.getSessionMsg()
     },
   },

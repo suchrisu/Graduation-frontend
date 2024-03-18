@@ -75,6 +75,7 @@ export default {
     editSession() {
       this.isReadonly = false
       this.$refs.inputName.focus()
+      this.$refs.inputName.select()
     },
     deleteSession(sessionId) {
       const loading = loadingWindow()
@@ -91,6 +92,9 @@ export default {
         })
     },
     quitEdit(session) {
+      if(this.oldName == session.sessionName){
+        return;
+      }
       const loading = loadingWindow()
       api
         .setSessionName(session)

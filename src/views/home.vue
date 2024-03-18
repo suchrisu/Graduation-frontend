@@ -13,11 +13,24 @@
 
 <script>
 import Nav from '../components/Nav.vue'
+import {mapState,mapMutations} from 'vuex'
+import api from "@/api/index"
 export default {
   name: 'App',
   components: {
     Nav,
   },
+  computed:{
+    ...mapState(["currentUser"])
+  },
+  methods:{
+    ...mapMutations(["setUserHeader"])
+  },
+  mounted(){
+    var url = api.getHeader(this.currentUser.userHeader);
+    console.log("url",url)
+    this.setUserHeader(url);
+  }
 }
 </script>
 

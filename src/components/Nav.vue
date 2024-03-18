@@ -125,8 +125,11 @@ export default {
     },
     handleUploadHeaderSuccess(res,file){
       if(res.code==1){
-        this.currentUser.userHeader = res.data.data;
-        this.userHeader = URL.createObjectURL(file.raw);
+        let userTemp = deepClone(this.currentUser);
+        userTemp.userHeader = res.data;
+        console.log("userTemp",userTemp)
+        this.setCurrentUser(userTemp)
+        this.setUserHeader(URL.createObjectURL(file.raw));
         ElMessage.success("修改成功!");
       }
       else{
@@ -155,6 +158,9 @@ export default {
       })
     },
     quitEdit(){
+      if(this.oldName==this.user.userName){
+        return;
+      }
       const loading = loadingWindow()
       api.updateUser(this.user).then(
         res=>{
@@ -173,6 +179,7 @@ export default {
     editUserName(){
       this.isReadonly = false
       this.$refs.popoverUserName.focus()
+      this.$refs.popoverUserName.select()
     },
     changeMenu(index) {
       switch (index) {
