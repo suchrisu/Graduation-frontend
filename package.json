@@ -11,6 +11,7 @@
     "axios": "^1.6.7",
     "core-js": "^3.8.3",
     "element-plus": "^2.6.1",
+    "event-source-polyfill": "^1.0.31",
     "js-md5": "^0.8.3",
     "mockjs": "^1.1.0",
     "nanoid": "^5.0.6",
@@ -21,6 +22,7 @@
     "uuid": "^9.0.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.8",
+    "vue-sse": "^2.5.2",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

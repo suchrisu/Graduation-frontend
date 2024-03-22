@@ -11,8 +11,12 @@ export default {
   setSessionTime: '/session/setSessionTime',
   getSessions: '/session/getSessions',
 
+  
+  createSseConnect: '/chat/createSseConnect',
+  closeSseConnect: '/chat/closeSseConnect',
   chatWithLLM: '/chat/chatWithLLM',
   getChatMessageList: '/chat/getChatMessageList',
+  eval: '/chat/eval',
 
   updateUser: '/user/updateUser',
   updateUserPassword: '/user/updateUserPassword',

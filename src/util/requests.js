@@ -17,6 +17,7 @@ instance.interceptors.request.use(config=>{
 })
 
 instance.interceptors.response.use(res=>{
+    // console.log(res)
     if(res.headers['content-type'].includes("application/json")){
         if(res.data.code==1){
             return res;

@@ -47,7 +47,16 @@
               <span>{{ item.role }}</span>
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
-              {{ item.content }}
+              <div style="white-space: pre-wrap;" v-html="item.content">
+              </div>
+               <div class="score" v-if="!generating">
+                <img v-if="item.useful == 1" src="../../../assets/img/liked.png" alt="" class="like">
+                <img v-else src="../../../assets/img/like.png" alt="" class="like" @click="eval(item,true)">
+
+                <img v-if="item.useful == -1" src="../../../assets/img/unliked.png" alt="" class="unlike">
+                <img v-else src="../../../assets/img/unlike.png" alt="" class="unlike" @click="eval(item,false)">
+               </div>
+
             </div>
             <div class="chat-img" v-if="item.chatType == 1">
               <img
@@ -79,7 +88,8 @@
               <img :src="userHeader" alt="" />
             </div>
             <div class="chat-text" v-if="item.chatType == 0">
-              {{ item.content }}
+              <div style="white-space: pre-wrap;" v-html="item.content">
+              </div>
             </div>
             <div class="chat-img" v-if="item.chatType == 1">
               <img
@@ -119,9 +129,16 @@
                 @closeEmoji="clickEmoji"
               ></Emoji>
             </div> -->
-        <input class="inputs" v-model="inputMsg" @keyup.enter="sendText" />
-        <div class="send boxinput" @click="sendText">
-          <img src="@/assets/img/emoji/rocket.png" alt="" />
+        <input
+          class="inputs"
+          v-model="inputMsg"
+          @keyup.enter="createSseConnect"
+        />
+        <div v-if="generating" class="send boxinput" @click="closeSseConnect">
+          <img src="@/assets/img/stop.png" alt="" />
+        </div>
+        <div v-else class="send boxinput" @click="createSseConnect">
+          <img src="@/assets/img/send.png" alt="" />
         </div>
       </div>
     </div>
@@ -129,14 +146,15 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { animation,sessionStorageGet } from '@/util/util'
-import {ElMessage} from 'element-plus'
-import HeadPortrait from '@/components/HeadPortrait'
-import Emoji from '@/components/Emoji'
-import FileCard from '@/components/FileCard.vue'
-import api from '@/api/index'
-import { mapState } from 'vuex'
+import { $on, $off, $once, $emit } from "../../../utils/gogocodeTransfer";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import { animation, sessionStorageGet } from "@/util/util";
+import { ElMessage } from "element-plus";
+import HeadPortrait from "@/components/HeadPortrait";
+import Emoji from "@/components/Emoji";
+import FileCard from "@/components/FileCard.vue";
+import api from "@/api/index";
+import { mapState } from "vuex";
 export default {
   components: {
     HeadPortrait,
@@ -146,199 +164,262 @@ export default {
   props: {
     session: Object,
     default() {
-      return {}
+      return {};
     },
   },
   watch: {
     session() {
       // console.log('watchsession')
-      this.getSessionMsg()
+      this.getSessionMsg();
     },
   },
   data() {
     return {
       chatMsgList: [],
-      inputMsg: '',
+      inputMsg: "",
       showEmoji: false,
       srcImgList: [],
-      sessionImg: require('@/assets/img/session1.png'),
-      assistantHeadImg: require('@/assets/img/assistant.png')
-    }
+      sessionImg: require("@/assets/img/session1.png"),
+      assistantHeadImg: require("@/assets/img/assistant.png"),
+      sse:"",
+      replyMsg:"",
+      generating: false
+    };
   },
   mounted() {
     // this.getFriendChatMsg();
-    this.getSessionMsg()
+    this.getSessionMsg();
   },
-  computed:{
-    ...mapState(["userHeader"])
+  computed: {
+    ...mapState(["userHeader"]),
   },
   methods: {
-    // //获取聊天记录
-    // getFriendChatMsg() {
-    //   let params = {
-    //     frinedId: this.frinedInfo.id,
-    //   };
-    //   getChatMsg(params).then((res) => {
-    //     this.chatMsgList = res;
-    //     this.chatMsgList.forEach((item) => {
-    //       if (item.chatType == 2 && item.extend.imgType == 2) {
-    //         this.srcImgList.push(item.content);
-    //       }
-    //     });
-    // this.scrollBottom();
 
-    //   });
-    // },
+    eval(item,like){
+      api.eval(this.session.sessionFile,item.id,like).then(res=>{
+        item.useful = like? 1 : -1;
+        this.chatMsgList = res.data.data;
+      }).catch(err=>{
+        ElMessage.error(err.message);
+      })
+    },
+
+    closeSseConnect(){
+      api.closeSseConnect(this.session.sessionFile);
+      this.generating = false;
+    },
+    createSseConnect() {
+      if(this.generating){
+        return;
+      }
+      if(this.inputMsg.trim().length == 0) {
+        this.$message({
+          message: "消息不能为空哦~",
+          type: "warning",
+        });
+        return;
+      }
+      if (window.EventSource) {
+        var clientId = this.session.sessionFile;
+        const token = sessionStorageGet("token");
+        this.generating = true;
+        const eventSource = new EventSourcePolyfill(
+          api.createSseConnect(clientId),
+          {
+            withCredentials: true,
+            headers: {
+              token: token,
+            },
+          }
+        );
+
+        eventSource.onerror = (event) => {//onerror事件中捕获当前连接结束的状态
+        if (event.readyState == EventSource.CLOSED) {
+                        console.log("SSE连接关闭");
+                        
+          } else if (eventSource.readyState == EventSource.CONNECTING) {//当sse完成一个连接后将会继续连接，此时在这里阻止连接
+                      console.log("SSE正在重连");
+                      eventSource.close();
+                      console.log('关闭成功')
+                      
+          } else {    
+                
+                     ElMessage.error("sse连接错误!")
+               }
+               this.generating = false;
+           };
+
+        eventSource.onmessage = (event)=>{
+          if(event.data == "[CONNECT]"){
+            this.sendText();
+            this.replyMsg = {
+              role: "assistant",
+              content: "",
+              chatType: 0
+            }
+            this.chatMsgList.push(this.replyMsg);
+          
+          }
+          else if(event.data == "[DONE]"){
+            this.generating = false;
+            eventSource.close();
+
+          }
+          else{
+            const result = JSON.parse(event.data);
+            result.data = result.data.replace(/\n/g,'<br>');
+            this.replyMsg.content = this.replyMsg.content + result.data;
+            this.scrollBottom();
+            console.log(result.data)
+          }
+        }
+        }else{
+          this.generating = false;
+          ElMessage.error("浏览器不支持SSE!")
+        }
+    },
     // 发送信息
     sendMsg(msg) {
-      msg.role = 'user'
-      this.chatMsgList.push(msg)
-      console.log(this.chatMsgList)
-      this.scrollBottom()
-      $emit(this, 'sessionCardSort', this.session.sessionId)
-
+      msg.role = "user";
+      this.chatMsgList.push(msg);
+      // console.log(this.chatMsgList)
+      this.scrollBottom();
+      $emit(this, "sessionCardSort", this.session.sessionId);
       api
         .chatWithLLM(this.session.sessionFile, msg)
         .then((res) => {
-            this.chatMsgList = res.data.data
-            this.scrollBottom()
-            console.log('list', this.chatMsgList)
+          this.chatMsgList = res.data.data;
+          this.scrollBottom();
+          console.log("list", this.chatMsgList);
         })
-        .catch((err)=>{ 
-          ElMessage.error(err.message)
+        .catch((err) => {
+          ElMessage.error(err.message);
         })
     },
     //获取窗口高度并滚动至最底层
     getSessionMsg() {
-      console.log(this.session)
+      console.log(this.session);
       api
         .getChatMessageList(this.session.sessionFile)
         .then((res) => {
-            this.chatMsgList = res.data.data
-            this.scrollBottom()
+          this.chatMsgList = res.data.data;
+          this.scrollBottom();
         })
-        .catch((err)=>{ 
-          ElMessage.error(err.message)
-        })
+        .catch((err) => {
+          ElMessage.error(err.message);
+        });
     },
     scrollBottom() {
       this.$nextTick(() => {
-        const scrollDom = this.$refs.chatContent
-        animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight)
-      })
+        const scrollDom = this.$refs.chatContent;
+        animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+      });
     },
     //关闭标签框
     clickEmoji() {
-      this.showEmoji = !this.showEmoji
+      this.showEmoji = !this.showEmoji;
     },
     //发送文字信息
     sendText() {
-      if (this.inputMsg) {
         let chatMsg = {
           content: this.inputMsg,
           chatType: 0, //信息类型，0文字，1图片
-        }
-        this.inputMsg = ''
-        this.sendMsg(chatMsg)
-      } else {
-        this.$message({
-          message: '消息不能为空哦~',
-          type: 'warning',
-        })
-      }
+        };
+        this.inputMsg = "";
+        this.sendMsg(chatMsg);
     },
     //发送表情
     sendEmoji(msg) {
       let chatMsg = {
-        headImg: require('@/assets/img/head_portrait.jpg'),
+        headImg: require("@/assets/img/head_portrait.jpg"),
         msg: msg,
         chatType: 1, //信息类型，0文字，1图片
         extend: {
           imgType: 1, //(1表情，2本地图片)
         },
-      }
-      this.clickEmoji()
-      this.sendMsg(chatMsg)
+      };
+      this.clickEmoji();
+      this.sendMsg(chatMsg);
     },
     //发送本地图片
     sendImg(e) {
-      let _this = this
-      console.log(e.target.files)
+      let _this = this;
+      console.log(e.target.files);
       let chatMsg = {
-        headImg: require('@/assets/img/head_portrait.jpg'),
-        msg: '',
+        headImg: require("@/assets/img/head_portrait.jpg"),
+        msg: "",
         chatType: 1, //信息类型，0文字，1图片, 2文件
         extend: {
           imgType: 2, //(1表情，2本地图片)
         },
-      }
-      let files = e.target.files[0] //图片文件名
-      if (!e || !window.FileReader) return // 看是否支持FileReader
-      let reader = new FileReader()
-      reader.readAsDataURL(files) // 关键一步，在这里转换的
+      };
+      let files = e.target.files[0]; //图片文件名
+      if (!e || !window.FileReader) return; // 看是否支持FileReader
+      let reader = new FileReader();
+      reader.readAsDataURL(files); // 关键一步，在这里转换的
       reader.onloadend = function () {
-        chatMsg.msg = this.result //赋值
-        _this.srcImgList.push(chatMsg.msg)
-      }
+        chatMsg.msg = this.result; //赋值
+        _this.srcImgList.push(chatMsg.msg);
+      };
 
-      e.target.files = null
-      this.sendMsg(chatMsg)
+      e.target.files = null;
+      this.sendMsg(chatMsg);
     },
     //发送文件
     sendFile(e) {
       let chatMsg = {
-        headImg: require('@/assets/img/head_portrait.jpg'),
-        msg: '',
+        headImg: require("@/assets/img/head_portrait.jpg"),
+        msg: "",
         chatType: 2, //信息类型，0文字，1图片, 2文件
         extend: {
-          fileType: '', //(1word，2excel，3ppt，4pdf，5zpi, 6txt)
+          fileType: "", //(1word，2excel，3ppt，4pdf，5zpi, 6txt)
         },
-      }
-      let files = e.target.files[0] //图片文件名
-      chatMsg.msg = files
-      console.log(files)
+      };
+      let files = e.target.files[0]; //图片文件名
+      chatMsg.msg = files;
+      console.log(files);
       if (files) {
         switch (files.type) {
-          case 'application/msword':
-          case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            chatMsg.extend.fileType = 1
-            break
-          case 'application/vnd.ms-excel':
-          case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-            chatMsg.extend.fileType = 2
-            break
-          case 'application/vnd.ms-powerpoint':
-          case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-            chatMsg.extend.fileType = 3
-            break
-          case 'application/pdf':
-            chatMsg.extend.fileType = 4
-            break
-          case 'application/zip':
-          case 'application/x-zip-compressed':
-            chatMsg.extend.fileType = 5
-            break
-          case 'text/plain':
-            chatMsg.extend.fileType = 6
-            break
+          case "application/msword":
+          case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            chatMsg.extend.fileType = 1;
+            break;
+          case "application/vnd.ms-excel":
+          case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            chatMsg.extend.fileType = 2;
+            break;
+          case "application/vnd.ms-powerpoint":
+          case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            chatMsg.extend.fileType = 3;
+            break;
+          case "application/pdf":
+            chatMsg.extend.fileType = 4;
+            break;
+          case "application/zip":
+          case "application/x-zip-compressed":
+            chatMsg.extend.fileType = 5;
+            break;
+          case "text/plain":
+            chatMsg.extend.fileType = 6;
+            break;
           default:
-            chatMsg.extend.fileType = 0
+            chatMsg.extend.fileType = 0;
         }
-        e.target.files = null
-        this.sendMsg(chatMsg)
+        e.target.files = null;
+        this.sendMsg(chatMsg);
       }
     },
     // 发送语音
     telephone() {
-      this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+      this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
     },
     //发送视频
     video() {
-      this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+      this.$message("该功能还没有开发哦，敬请期待一下吧~🥳");
     },
   },
-  emits: ['sessionCardSort'],
-}
+  emits: ["sessionCardSort"],
+};
 </script>
 
 <style lang="scss" scoped>
@@ -350,7 +431,7 @@ export default {
   .top {
     margin-bottom: 10px;
     &::after {
-      content: '';
+      content: "";
       display: block;
       clear: both;
     }
@@ -563,4 +644,25 @@ export default {
     }
   }
 }
+
+.score{
+  display: flex;
+  float: right;
+}
+
+.like{
+  height: 18px;
+  cursor: pointer;
+  margin-right: 3px;
+  margin-top: 3px;
+  margin-bottom: 1px;
+  color: black;
+}
+.unlike{
+  height:18px;
+  cursor: pointer;
+  margin-top: 7px;
+  margin-bottom: 1px;
+}
+
 </style>

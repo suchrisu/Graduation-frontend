@@ -1,3 +1,4 @@
+
 import axios from '../util/requests'
 import path from './path'
 import {ElMessage} from 'element-plus'
@@ -30,12 +31,24 @@ export default {
   getSessions() {
     return axios.get(path.getSessions)
   },
+
+  createSseConnect(clientId){
+    return path.baseUrl+path.createSseConnect+"?clientId="+clientId;
+  },
+  closeSseConnect(clientId){
+    return axios.get(path.closeSseConnect+"?clientId="+clientId);
+  },
   chatWithLLM(sessionFile, chatMessage) {
     return axios.post(
       path.chatWithLLM + '?sessionFile=' + sessionFile,
       chatMessage
     )
   },
+
+  eval(sessionFile,id,like){
+    return axios.get(path.eval+"?sessionFile="+sessionFile+"&id="+id+"&like="+like)
+  },
+
   getChatMessageList(sessionFile) {
     return axios.get(path.getChatMessageList + '?sessionFile=' + sessionFile)
   },
