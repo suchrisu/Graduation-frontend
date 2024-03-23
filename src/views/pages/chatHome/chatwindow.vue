@@ -148,7 +148,7 @@
 <script>
 import { $on, $off, $once, $emit } from "../../../utils/gogocodeTransfer";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { animation, sessionStorageGet } from "@/util/util";
+import { animation, deepClone, getTime, sessionStorageGet } from "@/util/util";
 import { ElMessage } from "element-plus";
 import HeadPortrait from "@/components/HeadPortrait";
 import Emoji from "@/components/Emoji";
@@ -194,7 +194,18 @@ export default {
     ...mapState(["userHeader"]),
   },
   methods: {
-
+    updateSessionTime(){
+      const oldTime = this.session.sessionLastTime;
+      this.session.sessionLastTime = getTime();
+      api.setSessionTime(this.session).then(res=>{
+        
+      }).catch(err=>{
+        ElMessage.error(err.message);
+        this.session.sessionLastTime = oldTime;
+      })
+      
+    }
+    ,
     eval(item,like){
       api.eval(this.session.sessionFile,item.id,like).then(res=>{
         item.useful = like? 1 : -1;
@@ -251,6 +262,7 @@ export default {
 
         eventSource.onmessage = (event)=>{
           if(event.data == "[CONNECT]"){
+            this.updateSessionTime();
             this.sendText();
             this.replyMsg = {
               role: "assistant",
@@ -258,6 +270,7 @@ export default {
               chatType: 0
             }
             this.chatMsgList.push(this.replyMsg);
+            
           
           }
           else if(event.data == "[DONE]"){
@@ -284,13 +297,13 @@ export default {
       this.chatMsgList.push(msg);
       // console.log(this.chatMsgList)
       this.scrollBottom();
-      $emit(this, "sessionCardSort", this.session.sessionId);
+      $emit(this, "sessionCardSort", this.session);
       api
         .chatWithLLM(this.session.sessionFile, msg)
         .then((res) => {
           this.chatMsgList = res.data.data;
           this.scrollBottom();
-          console.log("list", this.chatMsgList);
+          this.generating = false;
         })
         .catch((err) => {
           ElMessage.error(err.message);

@@ -1,8 +1,9 @@
 <template>
   <div
     class="person-card"
-    :class="{ activeCard: session.sessionId == current }"
+    :class="session.sessionId == current? active : noActive "
   >
+  <!-- :class="{ activeCard: session.sessionId == current }" -->
     <div class="info">
       <!-- <HeadPortrait :imgUrl="sessionImg"></HeadPortrait> -->
       <div class="info-detail">
@@ -17,7 +18,7 @@
             ref="inputName"
           />
         </div>
-        <div class="detail">{{ session.sessionDetail }}</div>
+        <div class="detail">{{ session.sessionLastTime }}</div>
       </div>
       <div class="editDelete">
         <div class="edit">
@@ -57,12 +58,17 @@ export default {
       isReadonly: true,
       oldName: '',
       sessionImg: require('@/assets/img/session1.png'),
+      active: "activeCard",
+      noActive: "person-card"
     }
   },
   watch: {
-    sessionCurrent: function () {
-      this.isActive()
-    },
+    sessionCurrent: {
+      handler(newValue){
+        this.isActive();
+      },
+      immediate: true
+    }
   },
   mounted() {
     this.oldName = this.session.sessionName

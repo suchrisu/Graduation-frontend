@@ -9,6 +9,13 @@
         <span class="addSession">
           <el-button @click="addSession"><el-icon class="plusIcon"><Plus/></el-icon>新建会话</el-button>
         </span>
+        <div class="sessionSearch">
+          <el-input v-model="sessionSearchName" class="sessionSearchInput" placeholder="输入会话名称">
+            <template #suffix>
+              <el-icon class="sessionSearchIcon"><Search/></el-icon>
+            </template>
+          </el-input>
+        </div>
         <div class="person-cards-wrapper">
           <div
             class="personList"
@@ -16,7 +23,7 @@
             :key="session.sessionId"
             @click="clickSession(session)"
           >
-            <PersonCard
+            <PersonCard v-if="session.sessionName.includes(sessionSearchName)"
               :session="session"
               :sessionCurrent="sessionCurrent"
             ></PersonCard>
@@ -44,8 +51,8 @@
 <script>
 import PersonCard from '@/components/PersonCard.vue'
 import ChatWindow from './chatwindow.vue'
-import {Plus} from "@element-plus/icons-vue"
-import { sessionStorageGet, getTime, loadingWindow, getDate } from '@/util/util'
+import {Plus,Search} from "@element-plus/icons-vue"
+import { sessionStorageGet, getTime, loadingWindow, getDate, deepClone } from '@/util/util'
 import { mapState, mapMutations } from 'vuex'
 import { nanoid } from 'nanoid'
 import api from '@/api/index'
@@ -56,7 +63,9 @@ export default {
       sessionCurrent: '',
       showChatWindow: false,
       chatWindowInfo: {},
-      Plus: Plus
+      Plus: Plus,
+      Search: Search,
+      sessionSearchName:""
     }
   },
   name: 'App',
@@ -69,7 +78,14 @@ export default {
     api
       .getSessions()
       .then((res) => {
-          this.setSessionList(res.data.data)
+          let list = res.data.data;
+          list.sort((a,b)=>{
+            if(a.sessionLastTime > b.sessionLastTime){
+              return -1;
+            }
+            return 1;
+          })
+          this.setSessionList(list)
       })
       .catch((err)=>{ 
         ElMessage.error(err.message)
@@ -82,26 +98,63 @@ export default {
     ...mapState(['sessionList',"currentUser"]),
   },
   watch: {
+    
+    sessionSearchName(){
+      let flag = false;
+      for(let i = 0;i<this.sessionList.length;i++){
+        if(this.sessionList[i].sessionName.includes(this.sessionSearchName)){
+            flag = true;
+            this.showChatWindow = true;
+            this.chatWindowInfo = this.sessionList[i];
+            this.sessionCurrent = this.sessionList[i].sessionId;
+          break;
+        }
+      }
+      if(!flag){
+      this.showChatWindow = false;
+      this.chatWindowInfo = "";
+      this.sessionCurrent = "";
+      }
+      
+    },
     'sessionList.length': {
       handler(newValue,oldValue){
       if (newValue == 0) {
         this.showChatWindow = false;
+        this.chatWindowInfo = "";
+        this.sessionCurrent = "";
         return;
       }
 
       if(newValue != oldValue){
-        this.chatWindowInfo = this.sessionList[0];
-        this.sessionCurrent = this.sessionList[0].sessionId;
+        for(let i = 0;i < newValue;i++){
+        if(this.sessionList[i].sessionName.includes(this.sessionSearchName)){
+          this.showChatWindow = true;
+          this.chatWindowInfo = this.sessionList[i];
+          this.sessionCurrent = this.sessionList[i].sessionId;
+          return;
+        }
+        
+        }
+        this.showChatWindow = false;
+        this.chatWindowInfo = "";
+        this.sessionCurrent = "";
+        
       }
       
-    }
+    },
+    
 
       }
     }  
     ,
   methods: {
     ...mapMutations(['setSessionList']),
+    searchSession(name){
+      
+    },
     addSession() {
+      this.sessionSearchName = "";
       let newSession = {
         sessionId: this.currentUser.userId + '_' + getTime(),
         sessionOwner: this.currentUser.userId,
@@ -113,9 +166,10 @@ export default {
       api
         .addSession(newSession)
         .then((res) => {
-            let sessionListTemp = this.sessionList
+            let sessionListTemp = this.sessionList;
             sessionListTemp.unshift(newSession)
             this.setSessionList(sessionListTemp)
+
         })
         .catch((err)=>{ 
           ElMessage.error(err.message)
@@ -129,21 +183,19 @@ export default {
       this.chatWindowInfo = session
       this.sessionCurrent = session.sessionId
     },
-    sessionCardSort(id) {
+    sessionCardSort(nowSession) {
       let sessionListTemp = this.sessionList
-      if (id !== sessionListTemp[0].sessionId) {
-        console.log(id)
-        let nowSessionInfo
+      if (nowSession.sessionId !== sessionListTemp[0].sessionId) {
         for (let i = 0; i < sessionListTemp.length; i++) {
-          if (sessionListTemp[i].sessionId == id) {
-            nowSessionInfo = sessionListTemp[i]
+          if (sessionListTemp[i].sessionId == nowSession.sessionId) {
             sessionListTemp.splice(i, 1)
             break
           }
         }
-        sessionListTemp.unshift(nowSessionInfo)
+        sessionListTemp.unshift(nowSession)
         this.setSessionList(sessionListTemp)
       }
+      
     },
   },
 }
@@ -168,8 +220,8 @@ export default {
       .person-cards-wrapper {
         width: 230px;
         padding-left: 10px;
-        height: 69vh;
-        margin-top: 15px;
+        height: 60vh;
+        margin-top: 5px;
         overflow: hidden;
         overflow-y: scroll;
         box-sizing: border-box;
@@ -202,6 +254,7 @@ export default {
   margin-left: 20px;
 }
 .el-button {
+  width:115px;
   padding-top: 20px;
   padding-bottom: 20px;
   font-size: 14px;
@@ -219,8 +272,22 @@ export default {
 
 .plusIcon{
   margin: 10px 5px;
+  margin-left: 0;
   width: 50%;
   height: 100%;
+
+}
+
+.sessionSearch{
+  display: flex;
+  margin-top: 15px;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+}
+.sessionSearchInput{
+  margin: 5px;
+  width: 195px;
 
 }
 </style>
