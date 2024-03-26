@@ -14,12 +14,23 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="邮箱" prop="userId">
+
+
+      <el-form-item label="邮箱" prop="userId" v-if="user.rolePowerId==2">
         <el-input
           v-model="user.userId"
           placeholder="请输入注册时的邮箱"
           class="userIdInput"
         ></el-input>
+      </el-form-item>
+
+      <el-form-item label="用户名" prop="managerUserId" v-else>
+        <el-input
+          v-model="user.userId"
+          placeholder="请输入管理员的用户名"
+          class="userIdInput"
+        ></el-input>
+
       </el-form-item>
       <el-form-item label="密码" prop="userPassword">
         <el-input
@@ -83,6 +94,12 @@ export default {
       }
       cb(new Error('请输入验证码!'))
     }
+    var checkManagerId = (rule,value,cb) => {
+      if(this.user.userId != null && this.user.userId != ''){
+        return cb()
+      }
+      cb(new Error('请输入用户名!'))
+    }
     return {
       codeurl: 'http://localhost/login/loginCode',
       labelPostion: 'top',
@@ -97,9 +114,18 @@ export default {
         userId: [{ validator: checkEmail, trigger: 'blur' }],
         userPassword: [{ validator: checkPassword, trigger: 'blur' }],
         codeProp: [{ validator: checkCode, trigger: 'blur' }],
+        managerUserId: [{validator: checkManagerId, trigger: 'blur'}]
       },
     }
   },
+  watch:{
+    'user.rolePowerId': {
+      handler(){
+        this.user.userId = "";
+    }
+  }
+  },
+
   methods: {
     ...mapMutations(["setCurrentUser","setUserHeader"]),
     getCode() {
@@ -118,9 +144,14 @@ export default {
               let currentUser = res.data.data;
                 this.setCurrentUser(currentUser);
                 sessionStorageSet('token',res.data.message);
-                this.$router.push({
-                  path: '/chat',
-                })
+                if(currentUser.rolePowerId < 2){
+                  this.$router.push({
+                    name: "Manager"
+                  })
+                }
+                else{this.$router.push({
+                  name: 'Home',
+                })}
                 this.$message.success('欢迎' + res.data.data.userName + '!') 
             })
             .catch((err)=>{ 

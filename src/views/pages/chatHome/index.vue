@@ -1,9 +1,8 @@
 <template>
   <div class="chatHome">
-    <div class="chatLeft">
-      <div class="title">
-        <h1>智慧政务交互系统</h1>
-      </div>
+    <el-fade-in-linear>
+    <div class="chatLeft" v-show="showLeft">
+      
       <div class="online-person">
         <span class="onlin-text">会话列表</span>
         <span class="addSession">
@@ -31,6 +30,11 @@
         </div>
       </div>
     </div>
+  </el-fade-in-linear>
+  <div class="chatCenter" @click="swichLeft">
+    <el-icon v-if="showLeft"><ArrowLeftBold/></el-icon>
+    <el-icon v-else><ArrowRightBold/></el-icon>
+  </div>
     <div class="chatRight">
       <!-- <router-view></router-view> -->
       <div v-if="showChatWindow">
@@ -65,7 +69,8 @@ export default {
       chatWindowInfo: {},
       Plus: Plus,
       Search: Search,
-      sessionSearchName:""
+      sessionSearchName:"",
+      showLeft: true
     }
   },
   name: 'App',
@@ -150,6 +155,9 @@ export default {
     ,
   methods: {
     ...mapMutations(['setSessionList']),
+    swichLeft(){
+      this.showLeft = !this.showLeft;
+    },
     searchSession(name){
       
     },
@@ -206,13 +214,10 @@ export default {
   /*// margin-top: 20px;*/
   display: flex;
   .chatLeft {
+    display: flex;
     width: 230px;
-    .title {
-      color: #fff;
-      padding-left: 10px;
-    }
     .online-person {
-      margin-top: 60px;
+      margin-top: 70px;
       .onlin-text {
         padding-left: 10px;
         color: rgb(176, 178, 189);
@@ -290,4 +295,13 @@ export default {
   width: 195px;
 
 }
+.chatCenter{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  width:20px;
+  cursor: pointer;
+}
+
 </style>

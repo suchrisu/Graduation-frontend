@@ -1,0 +1,13 @@
+"filename", "language", "Vue", "JavaScript", "CSS", "JSON", "HTML", "comment", "blank", "total"
+"d:\Graduation Thesis\dark\policy-llm\src\api\index.js", "JavaScript", 0, 9, 0, 0, 0, 0, 4, 13
+"d:\Graduation Thesis\dark\policy-llm\src\api\path.js", "JavaScript", 0, 3, 0, 0, 0, 0, 1, 4
+"d:\Graduation Thesis\dark\policy-llm\src\assets\font\demo_index.html", "HTML", 0, 0, 0, 0, -120, 0, -18, -138
+"d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.css", "CSS", 0, 0, -18, 0, 0, 0, -6, -24
+"d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.js", "JavaScript", 0, -67, 0, 0, 0, 0, -1, -68
+"d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.json", "JSON", 0, 0, 0, -42, 0, 0, 0, -42
+"d:\Graduation Thesis\dark\policy-llm\src\components\Nav.vue", "Vue", -2, 0, 0, 0, 0, 3, 0, 1
+"d:\Graduation Thesis\dark\policy-llm\src\components\PersonCard.vue", "Vue", 5, 0, 0, 0, 0, 1, 0, 6
+"d:\Graduation Thesis\dark\policy-llm\src\util\requests.js", "JavaScript", 0, 0, 0, 0, 0, 1, 0, 1
+"d:\Graduation Thesis\dark\policy-llm\src\views\pages\chatHome\chatwindow.vue", "Vue", 93, 0, 0, 0, 0, 8, 14, 115
+"d:\Graduation Thesis\dark\policy-llm\src\views\pages\chatHome\index.vue", "Vue", 75, 0, 0, 0, 0, 0, 12, 87
+"Total", "-", 171, -55, -18, -42, -120, 13, 6, -45

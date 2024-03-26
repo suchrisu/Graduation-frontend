@@ -8,10 +8,10 @@
         <div class="name">{{ session.sessionName }}</div>
         <div class="detail">{{ session.sessionDetail }}</div>
       </div>
-      <div class="other-fun">
+      <!-- <div class="other-fun"> -->
         <!-- <span class="iconfont icon-shipin" @click="video"> </span> -->
         <!-- <span class="iconfont icon-gf-telephone" @click="telephone"></span> -->
-        <label for="docFile">
+        <!-- <label for="docFile">
           <span class="iconfont icon-wenjian"></span>
         </label>
         <label for="imgFile">
@@ -30,9 +30,9 @@
           id="docFile"
           @change="sendFile"
           accept="application/*,text/*"
-        />
+        /> -->
         <!-- accept="application/*" -->
-      </div>
+      <!-- </div> -->
     </div>
     <div class="botoom">
       <div class="chat-content" ref="chatContent">
@@ -325,6 +325,9 @@ export default {
     scrollBottom() {
       this.$nextTick(() => {
         const scrollDom = this.$refs.chatContent;
+        if(scrollDom==null){
+          return;
+        }
         animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
       });
     },

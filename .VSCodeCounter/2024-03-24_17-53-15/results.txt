@@ -1,0 +1,83 @@
+Date : 2024-03-24 17:53:15
+Directory : d:\Graduation Thesis\dark\policy-llm\src
+Total : 36 files,  3899 codes, 438 comments, 320 blanks, all 4657 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| Vue        |         20 |      2,666 |         72 |        127 |      2,865 |
+| JavaScript |         12 |        515 |        345 |         75 |        935 |
+| CSS        |          2 |        457 |         19 |         92 |        568 |
+| HTML       |          1 |        231 |          2 |         25 |        258 |
+| JSON       |          1 |         30 |          0 |          1 |         31 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                         | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                            |         36 |      3,899 |        438 |        320 |      4,657 |
+| . (Files)                                                                    |          3 |         97 |          2 |         14 |        113 |
+| api                                                                          |          3 |        109 |         17 |         21 |        147 |
+| assets                                                                       |          5 |        719 |         21 |        118 |        858 |
+| assets\font                                                                  |          5 |        719 |         21 |        118 |        858 |
+| components                                                                   |          9 |      1,561 |         17 |         59 |      1,637 |
+| components (Files)                                                           |          7 |      1,158 |         13 |         45 |      1,216 |
+| components\login                                                             |          2 |        403 |          4 |         14 |        421 |
+| mock                                                                         |          1 |          0 |        275 |         13 |        288 |
+| router                                                                       |          1 |         55 |         14 |          7 |         76 |
+| store                                                                        |          1 |         33 |          0 |          1 |         34 |
+| util                                                                         |          2 |        191 |         34 |         21 |        246 |
+| utils                                                                        |          1 |         56 |          3 |          1 |         60 |
+| views                                                                        |         10 |      1,078 |         55 |         65 |      1,198 |
+| views (Files)                                                                |          3 |         66 |          1 |          7 |         74 |
+| views\chat                                                                   |          1 |          8 |          0 |          2 |         10 |
+| views\login                                                                  |          1 |         90 |          0 |          6 |         96 |
+| views\pages                                                                  |          5 |        914 |         54 |         50 |      1,018 |
+| views\pages (Files)                                                          |          3 |         16 |          0 |          6 |         22 |
+| views\pages\chatHome                                                         |          2 |        898 |         54 |         44 |        996 |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                     | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\Graduation Thesis\dark\policy-llm\src\App.vue                             | Vue        |         27 |          0 |          3 |         30 |
+| d:\Graduation Thesis\dark\policy-llm\src\api\getData.js                      | JavaScript |         17 |          2 |          3 |         22 |
+| d:\Graduation Thesis\dark\policy-llm\src\api\index.js                        | JavaScript |         69 |         15 |         13 |         97 |
+| d:\Graduation Thesis\dark\policy-llm\src\api\path.js                         | JavaScript |         23 |          0 |          5 |         28 |
+| d:\Graduation Thesis\dark\policy-llm\src\assets\font\demo.css                | CSS        |        435 |         19 |         86 |        540 |
+| d:\Graduation Thesis\dark\policy-llm\src\assets\font\demo_index.html         | HTML       |        231 |          2 |         25 |        258 |
+| d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.css            | CSS        |         22 |          0 |          6 |         28 |
+| d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.js             | JavaScript |          1 |          0 |          0 |          1 |
+| d:\Graduation Thesis\dark\policy-llm\src\assets\font\iconfont.json           | JSON       |         30 |          0 |          1 |         31 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\ChangPassword.vue        | Vue        |        226 |          0 |          7 |        233 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\Emoji.vue                | Vue        |        151 |          3 |          4 |        158 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\FileCard.vue             | Vue        |         84 |          1 |          3 |         88 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\HeadPortrait.vue         | Vue        |         32 |          1 |          3 |         36 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\HelloWorld.vue           | Vue        |        127 |          0 |          3 |        130 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\Nav.vue                  | Vue        |        297 |          5 |         22 |        324 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\PersonCard.vue           | Vue        |        241 |          3 |          3 |        247 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\login\LoginForm.vue      | Vue        |        183 |          2 |          7 |        192 |
+| d:\Graduation Thesis\dark\policy-llm\src\components\login\RegisterForm.vue   | Vue        |        220 |          2 |          7 |        229 |
+| d:\Graduation Thesis\dark\policy-llm\src\main.js                             | JavaScript |         39 |          1 |          8 |         48 |
+| d:\Graduation Thesis\dark\policy-llm\src\mock\index.js                       | JavaScript |          0 |        275 |         13 |        288 |
+| d:\Graduation Thesis\dark\policy-llm\src\registerServiceWorker.js            | JavaScript |         31 |          1 |          3 |         35 |
+| d:\Graduation Thesis\dark\policy-llm\src\router\index.js                     | JavaScript |         55 |         14 |          7 |         76 |
+| d:\Graduation Thesis\dark\policy-llm\src\store\index.js                      | JavaScript |         33 |          0 |          1 |         34 |
+| d:\Graduation Thesis\dark\policy-llm\src\util\requests.js                    | JavaScript |         31 |          2 |          5 |         38 |
+| d:\Graduation Thesis\dark\policy-llm\src\util\util.js                        | JavaScript |        160 |         32 |         16 |        208 |
+| d:\Graduation Thesis\dark\policy-llm\src\utils\gogocodeTransfer.js           | JavaScript |         56 |          3 |          1 |         60 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\AboutView.vue                 | Vue        |          5 |          0 |          1 |          6 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\HomeView.vue                  | Vue        |         15 |          1 |          3 |         19 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\chat\ChatView.vue             | Vue        |          8 |          0 |          2 |         10 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\home.vue                      | Vue        |         46 |          0 |          3 |         49 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\login\LoginView.vue           | Vue        |         90 |          0 |          6 |         96 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\pages\chatHome\chatwindow.vue | Vue        |        610 |         49 |         23 |        682 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\pages\chatHome\index.vue      | Vue        |        288 |          5 |         21 |        314 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\pages\lingting.vue            | Vue        |          4 |          0 |          2 |          6 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\pages\setting.vue             | Vue        |          6 |          0 |          2 |          8 |
+| d:\Graduation Thesis\dark\policy-llm\src\views\pages\video.vue               | Vue        |          6 |          0 |          2 |          8 |
+| Total                                                                        |            |      3,899 |        438 |        320 |      4,657 |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

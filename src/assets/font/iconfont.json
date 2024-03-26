@@ -1,72 +1,58 @@
 {
-  "id": "3829178",
-  "name": "chat",
+  "id": "4479619",
+  "name": "policyllm",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
   "glyphs": [
     {
-      "icon_id": "1080596",
-      "name": "snapchat",
-      "font_class": "snapchat",
-      "unicode": "e646",
-      "unicode_decimal": 58950
+      "icon_id": "2681975",
+      "name": "管理员",
+      "font_class": "guanliyuan",
+      "unicode": "e6fb",
+      "unicode_decimal": 59131
     },
     {
-      "icon_id": "6714382",
+      "icon_id": "4770751",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "7339840",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e6aa",
+      "unicode_decimal": 59050
+    },
+    {
+      "icon_id": "11121369",
+      "name": "管理工具",
+      "font_class": "guanligongju",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "2486605",
       "name": "文件",
       "font_class": "wenjian",
-      "unicode": "e62e",
-      "unicode_decimal": 58926
+      "unicode": "e60e",
+      "unicode_decimal": 58894
     },
     {
-      "icon_id": "7568886",
-      "name": "24gf-telephone",
-      "font_class": "gf-telephone",
-      "unicode": "e96c",
-      "unicode_decimal": 59756
+      "icon_id": "12475050",
+      "name": "应急知识库-文件库",
+      "font_class": "yingjizhishiku-wenjianku",
+      "unicode": "e679",
+      "unicode_decimal": 59001
     },
     {
-      "icon_id": "12382329",
-      "name": "图片",
-      "font_class": "tupian",
-      "unicode": "e610",
-      "unicode_decimal": 58896
-    },
-    {
-      "icon_id": "1283",
-      "name": "视频",
-      "font_class": "shipin",
-      "unicode": "e600",
-      "unicode_decimal": 58880
-    },
-    {
-      "icon_id": "1412",
-      "name": "树",
-      "font_class": "shu",
-      "unicode": "e601",
-      "unicode_decimal": 58881
-    },
-    {
-      "icon_id": "1727422",
-      "name": "205设置",
-      "font_class": "shezhi",
-      "unicode": "e8b8",
-      "unicode_decimal": 59576
-    },
-    {
-      "icon_id": "5744743",
-      "name": "message",
-      "font_class": "xinxi",
-      "unicode": "e607",
-      "unicode_decimal": 58887
-    },
-    {
-      "icon_id": "15391349",
-      "name": "闪电",
-      "font_class": "shandian",
-      "unicode": "e61b",
-      "unicode_decimal": 58907
+      "icon_id": "26535264",
+      "name": "消息",
+      "font_class": "xiaoxi",
+      "unicode": "e628",
+      "unicode_decimal": 58920
     }
   ]
 }

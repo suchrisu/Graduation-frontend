@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 3829178 */
-  src: url('iconfont.woff2?t=1675406501520') format('woff2'),
-       url('iconfont.woff?t=1675406501520') format('woff'),
-       url('iconfont.ttf?t=1675406501520') format('truetype');
+  font-family: "iconfont"; /* Project id 4479619 */
+  src: url('iconfont.woff2?t=1711439319102') format('woff2'),
+       url('iconfont.woff?t=1711439319102') format('woff'),
+       url('iconfont.ttf?t=1711439319102') format('truetype');
 }
 
 .iconfont {
@@ -13,39 +13,31 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-snapchat:before {
-  content: "\e646";
+.icon-guanliyuan:before {
+  content: "\e6fb";
+}
+
+.icon-yonghu:before {
+  content: "\e63f";
+}
+
+.icon-yonghuguanli:before {
+  content: "\e6aa";
+}
+
+.icon-guanligongju:before {
+  content: "\e627";
 }
 
 .icon-wenjian:before {
-  content: "\e62e";
+  content: "\e60e";
 }
 
-.icon-gf-telephone:before {
-  content: "\e96c";
+.icon-yingjizhishiku-wenjianku:before {
+  content: "\e679";
 }
 
-.icon-tupian:before {
-  content: "\e610";
-}
-
-.icon-shipin:before {
-  content: "\e600";
-}
-
-.icon-shu:before {
-  content: "\e601";
-}
-
-.icon-shezhi:before {
-  content: "\e8b8";
-}
-
-.icon-xinxi:before {
-  content: "\e607";
-}
-
-.icon-shandian:before {
-  content: "\e61b";
+.icon-xiaoxi:before {
+  content: "\e628";
 }
 

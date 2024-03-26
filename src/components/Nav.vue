@@ -8,8 +8,8 @@
           :class="{ activeNav: index == current }"
           @click="changeMenu(index)"
         >
-          <div class="block"></div>
-          <span class="iconfont" :class="item"></span>
+          <div class="block" v-if="index!=0||currentUser.rolePowerId<2"></div>
+          <span class="iconfont" :class="item" v-if="index!=0||currentUser.rolePowerId<2"></span>
         </li>
       </ul>
     </div>
@@ -83,13 +83,15 @@ export default {
   data() {
     return {
       menuList: [
-        'icon-xinxi',
+        'icon-guanligongju',
+        'icon-xiaoxi',
+        'icon-yingjizhishiku-wenjianku'
         // "icon-shipin",
-        'icon-shu',
-        'icon-shandian',
-        'icon-shezhi',
+        // 'icon-shu',
+        // 'icon-shandian',
+        // 'icon-shezhi',
       ],
-      current: 0,
+      current: "",
       user:{},
       isReadonly: true,
       oldName: "",
@@ -105,7 +107,10 @@ export default {
     this.headers = {
       token: sessionStorageGet("token")
     }
+    let current = this.currentUser.rolePowerId<2? 0: 1;
+    this.changeMenu(current);
   },
+  
   computed:{
     ...mapState(["userHeader","currentUser"])
   },
@@ -184,18 +189,22 @@ export default {
     changeMenu(index) {
       switch (index) {
         case 0:
-          this.$router.push(
+        this.$router.push({
+          name: 'Manager'
+        })
+        break
+        case 1:
+        this.$router.push(
             {
               name: 'ChatHome',
             },
             () => {}
           )
           break
-        case 1:
-          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
-          break
         case 2:
-          this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
+        this.$router.push({
+            name: "KnowledgeBase",
+          })
           break
         case 3:
           this.$message('该功能还没有开发哦，敬请期待一下吧~🥳')
@@ -223,7 +232,7 @@ export default {
   border-radius: 20px 0 0 20px;
   .nav-menu-wrapper {
     position: absolute;
-    top: 40%;
+    top: 27%;
     transform: translate(0, -50%);
     .menu-list {
       margin-left: 10px;

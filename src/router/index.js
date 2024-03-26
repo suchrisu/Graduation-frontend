@@ -18,7 +18,8 @@ const routes = [
     name: 'login',
     component: () => import('../views/login/LoginView.vue'),
     meta:{
-      isAuth: false
+      isAuth: false,
+      isManager: false
     }
   },
   // {
@@ -27,22 +28,53 @@ const routes = [
   //   component: ()=> import("../views/chat/ChatView.vue")
   // },
   {
-    path: '/chat',
-    name: 'chat',
+    path: '/home',
+    name: 'Home',
     component: () => import('../views/home.vue'),
-    redirect: '/chat/chatHome',
     meta:{
-      isAuth: true
+      isAuth: true,
+      isManager: false
     },
     children: [
+      {
+        path: 'manager',
+        name: 'Manager',
+        component: () => import('../views/manager/ManagerView.vue'),
+        meta:{
+          isAuth: true,
+          isManager: true
+        },
+        children: [
+          {
+            path: 'userManage/user',
+            name: 'user',
+            component:() => import('../views/manager/userManage/UserView.vue'),
+            meta:{
+              isAuth: true,
+              isManager: true
+            }  
+          }
+        ]
+      },
       {
         path: 'chatHome',
         name: 'ChatHome',
         component: () => import('../views/pages/chatHome/index.vue'),
         meta:{
-          isAuth: true
+          isAuth: true,
+          isManager: false
         }
       },
+      {
+        path: 'knowledgeBase',
+        name: 'KnowledgeBase',
+        component: () => import('../views/pages/KnowledgeBaseView.vue'),
+        meta:{
+          isAuth: true,
+          isManager: false
+        }
+      }
+      
     ],
   },
 ]
@@ -54,6 +86,17 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if(to.meta.isAuth==true){
+    if(to.meta.isManager==true){
+      let currentUser = sessionStorageGet("currentUser")
+      if(currentUser.rolePowerId >=2 ){
+        ElMessage.error("无权限!")
+        console.log(from)
+        router.push({
+          name: 'ChatHome'
+        });
+        return;
+      }
+    }
     const token = sessionStorageGet("token")
     if(token != '' && token != null){
       next()

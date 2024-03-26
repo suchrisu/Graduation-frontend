@@ -5,6 +5,10 @@
         <Nav></Nav>
       </el-aside>
       <el-main>
+        <div class="title">
+          <h1>智慧政务交互系统</h1>
+          
+        </div>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -44,5 +48,12 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+.title {
+  color: #fff;
+  padding-left: 10px;
+  position: absolute;
+  width: 200px;
+  z-index: 9999;
 }
 </style>
